@@ -48,22 +48,73 @@ class Role(db.Model):
         return '<Role %r>' % self.name
 
 
+class School(db.Model):
+    __tablename__ = 'schools'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128))
+    school_code = db.Column(db.String(16))
+
+    departments = db.relationship('Department', backref='school', lazy='dynamic')
+
+    def __repr__(self):
+        return '<School %r>' % self.name
+
+
+class Department(db.Model):
+    __tablename__ = 'departments'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
+    department_code = db.Column(db.String(16))
+
+    school_id = db.Column(db.Integer, db.ForeignKey('schools.id'))
+    specialties = db.relationship('Specialty', backref='department', lazy='dynamic')
+
+    def __repr__(self):
+        return '<Department %r>' % self.name
+
+
+class Specialty(db.Model):
+    __tablename__ = 'specialties'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
+    specialty_code = db.Column(db.String(16))
+
+    department_id = db.Column(db.Integer, db.ForeignKey('departments.id'))
+    classes = db.relationship('_Class', backref='specialty', lazy='dynamic')
+
+    def __repr__(self):
+        return '<Specialty %r>' % self.name
+
+
+class _Class(db.Model):
+    __tablename__ = 'classes'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
+    class_code = db.Column(db.String(16))
+
+    specialty_id = db.Column(db.Integer, db.ForeignKey('specialties.id'))
+    students = db.relationship('User', backref='_class', lazy='dynamic')
+
+    def __repr__(self):
+        return '<_Class %r>' % self.name
+
+
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    school_id = db.Column(db.String(16), unique=True, index=True)
+    school_code = db.Column(db.String(16), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
     name = db.Column(db.String(64))
     about_me = db.Column(db.Text())
 
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean, default=False)
 
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
 
-    posts = db.relationship('Post', backref='author', lazy='dynamic')
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    class_id = db.Column(db.Integer, db.ForeignKey('classes.id'))
 
     @staticmethod
     def generate_fake(count=100):
@@ -84,14 +135,6 @@ class User(UserMixin, db.Model):
                 db.session.commit()
             except IntegrityError:
                 db.session.rollback()
-
-    @staticmethod
-    def add_self_follows():
-        for user in User.query.all():
-            if not user.is_following(user):
-                user.follow(user)
-                db.session.add(user)
-                db.session.commit()
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
