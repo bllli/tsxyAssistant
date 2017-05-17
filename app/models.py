@@ -86,6 +86,12 @@ class Specialty(db.Model):
         return '<Specialty %r>' % self.name
 
 
+registrations = db.Table('registrations',
+                         db.Column('course_id', db.Integer, db.ForeignKey('courses.id')),
+                         db.Column('class_id', db.Integer, db.ForeignKey('classes.id'))
+                         )
+
+
 class _Class(db.Model):
     __tablename__ = 'classes'
     id = db.Column(db.Integer, primary_key=True)
@@ -95,8 +101,29 @@ class _Class(db.Model):
     specialty_id = db.Column(db.Integer, db.ForeignKey('specialties.id'))
     students = db.relationship('User', backref='_class', lazy='dynamic')
 
+    courses = db.relationship('Course',
+                              secondary=registrations,
+                              backref=db.backref('classes', lazy='dynamic'),
+                              lazy='dynamic')
+
     def __repr__(self):
         return '<_Class %r>' % self.name
+
+
+class Course(db.Model):
+    __tablename__ = 'courses'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128))
+    course_code = db.Column(db.String(16))
+
+    when_code = db.Column(db.String(32))
+    worth = db.Column(db.String(2))
+    week = db.Column(db.String(32))
+    parity = db.Column(db.String(32))
+    which_room = db.Column(db.String(32))
+    where = db.Column(db.String(32))
+
+    teacher_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
 class User(UserMixin, db.Model):
@@ -115,6 +142,8 @@ class User(UserMixin, db.Model):
 
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     class_id = db.Column(db.Integer, db.ForeignKey('classes.id'))
+
+    courses = db.relationship('Course', backref='teacher', lazy='dynamic')
 
     @staticmethod
     def generate_fake(count=100):

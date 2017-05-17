@@ -1,6 +1,6 @@
 import unittest
 from app import create_app, db
-from app.models import School, Department, Specialty, _Class, User, Role
+from app.models import School, Department, Specialty, _Class, User, Role, Course
 
 
 class SchoolStructureModelTestCase(unittest.TestCase):
@@ -55,3 +55,24 @@ class SchoolStructureModelTestCase(unittest.TestCase):
         db.session.add(c)
         db.session.commit()
         self.assertTrue(u in c.students)
+
+    def test_course_with_class(self):
+        course = Course(name='Java')
+        db.session.add(course)
+        db.session.commit()
+        c = _Class(name='14CS1')
+        c2 = _Class(name='14CS2')
+        c.courses.append(course)
+        c2.courses.append(course)
+        db.session.add(c)
+        db.session.add(c2)
+        db.session.commit()
+        self.assertTrue(course in c.courses.all())
+        self.assertTrue(c in course.classes.all())
+        self.assertTrue(course in c2.courses.all())
+        self.assertTrue(c2 in course.classes.all())
+        course.classes.remove(c)
+        db.session.add(course)
+        db.session.commit()
+        self.assertFalse(course in c.courses.all())
+        self.assertFalse(c in course.classes.all())
