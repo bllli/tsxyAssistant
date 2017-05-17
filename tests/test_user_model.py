@@ -80,7 +80,7 @@ class UserModelTestCase(unittest.TestCase):
         self.assertTrue(u2.verify_password('dog'))
 
     def test_roles_and_permissions(self):
-        u = User(email='john@example.com', password='cat')
+        u = User(username='john', password='cat')
         self.assertTrue(u.can(Permission.WRITE_ARTICLES))
         self.assertFalse(u.can(Permission.MODERATE_COMMENTS))
 
