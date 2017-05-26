@@ -5,6 +5,7 @@ from flask import current_app, request, url_for
 from flask_login import UserMixin, AnonymousUserMixin
 from app.exceptions import ValidationError
 from . import db, login_manager
+import tsxypy
 
 
 class Permission:
@@ -58,6 +59,56 @@ class School(db.Model):
 
     def __repr__(self):
         return '<School %r>' % self.name
+
+    @staticmethod
+    def insert_school_structure():
+        import os
+        base_dir = os.getcwd()
+        tmp_dir = os.path.join(base_dir, 'tmp')
+        school_file_dir = os.path.join(tmp_dir, 'school_dict')
+        if not os.path.exists(tmp_dir):
+            os.mkdir(tmp_dir)
+        if os.path.exists(school_file_dir):
+            with open(school_file_dir) as f:
+                import pickle
+                school_dict = pickle.load(f)
+        else:
+            sc = tsxypy.ScheduleCatcher()
+            school_dict = sc.get_school_json()
+            with open(school_file_dir, 'w') as f:
+                import pickle
+                pickle.dump(school_dict, f)
+        for school_year in school_dict['school_years']:
+            print(school_year['year'])
+            for department in school_year['departments']:
+                print("Dict: code:%s, name:%s in" % (department['code'], department['name']))
+                d = Department.query.filter_by(department_code=department['code']).first()
+                if not d:
+                    d = Department(name=department['name'], department_code=department['code'])
+                    db.session.add(d)
+                    db.session.commit()
+                else:
+                    print("DB: already in db code:%s, name:%s" % (d.department_code, d.name))
+                for specialty in department['specialties']:
+                    print("Dict: code:%s, name:%s in" % (specialty['code'], specialty['name']))
+                    s = Specialty.query.filter_by(specialty_code=specialty['code']).first()
+                    if not s:
+                        s = Specialty(name=specialty['name'], specialty_code=specialty['code'])
+                        s.department = d
+                        db.session.add(s)
+                        db.session.commit()
+                    else:
+                        print("DB: already in db code:%s, name:%s" % (s.specialty_code, s.name))
+                    for _class in specialty['classes']:
+                        print("Dict: code:%s, name:%s in" % (_class['code'], _class['name']))
+                        c = _Class.query.filter_by(class_code=_class['code']).first()
+                        if not c:
+                            c = _Class(name=_class['name'], class_code=_class['code'])
+                            c.specialty = s
+                            db.session.add(c)
+                            db.session.commit()
+                        else:
+                            print("DB: already in db code:%s, name:%s" % (c.class_code, c.name))
 
 
 class Department(db.Model):
