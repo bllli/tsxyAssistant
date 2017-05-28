@@ -1,24 +1,44 @@
+# -*- coding: utf-8 -*-
 from flask import g, jsonify
 from flask_httpauth import HTTPBasicAuth
 from ..models import User, AnonymousUser
 from . import api
 from .errors import unauthorized, forbidden
+from .. import db
+import tsxypy
+
 
 auth = HTTPBasicAuth()
 
 
 @auth.verify_password
-def verify_password(email_or_token, password):
-    if email_or_token == '':
+def verify_password(user_identity, password):
+    """
+    
+    :param user_identity: 可能时
+    :param password: 
+    :return: 
+    """
+    if user_identity == '':
         g.current_user = AnonymousUser()
         return True
     if password == '':
-        g.current_user = User.verify_auth_token(email_or_token)
+        g.current_user = User.verify_auth_token(user_identity)
         g.token_used = True
         return g.current_user is not None
-    user = User.query.filter_by(email=email_or_token).first()
+    if len(user_identity) == 10:
+        user = User.query.filter_by(school_code=user_identity).first()
+    else:
+        user = User.query.filter_by(username=user_identity).first()
     if not user:
-        return False
+        if len(user_identity) == 10 and tsxypy.is_tsxy_stu(user_identity, password):
+
+            user = User(school_code=user_identity, password=password)
+            user.confirmed = True
+            db.session.add(user)
+            db.session.commit()
+        else:
+            return False
     g.current_user = user
     g.token_used = False
     return user.verify_password(password)
