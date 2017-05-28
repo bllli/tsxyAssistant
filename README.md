@@ -7,6 +7,9 @@
 ### 签到功能
 [E-R图(需科学上网)](https://docs.google.com/drawings/d/1LRwgmYPzFbYqAIWy7lIKhAGfrTeFJIbt_TwR2yCo5DY/edit?usp=sharing)
 ### 课程表
+1. 抓取教务系统课程表: [tsxypy](https://github.com/bllli/tsxypy)
+2. 服务器后台获取课表, 提供课程表接口 (本项目) [接口文档](RESTful.md)
+3. 客户端请求并处理课程表
 ### 表单收集
 
 # Reference
