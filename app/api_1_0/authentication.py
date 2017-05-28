@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-from flask import g, jsonify
+from flask import g, jsonify, abort
 from flask_httpauth import HTTPBasicAuth
 from ..models import User, AnonymousUser
 from . import api
 from .errors import unauthorized, forbidden
 from .. import db
 import tsxypy
+from tsxypy.Exception import TsxyException
 
 
 auth = HTTPBasicAuth()
@@ -31,14 +32,17 @@ def verify_password(user_identity, password):
     else:
         user = User.query.filter_by(username=user_identity).first()
     if not user:
-        if len(user_identity) == 10 and tsxypy.is_tsxy_stu(user_identity, password):
+        try:
+            if len(user_identity) == 10 and tsxypy.is_tsxy_stu(user_identity, password):
 
-            user = User(school_code=user_identity, password=password)
-            user.confirmed = True
-            db.session.add(user)
-            db.session.commit()
-        else:
-            return False
+                user = User(school_code=user_identity, password=password)
+                user.confirmed = True
+                db.session.add(user)
+                db.session.commit()
+            else:
+                return False
+        except TsxyException as e:
+            abort(401)
     g.current_user = user
     g.token_used = False
     return user.verify_password(password)

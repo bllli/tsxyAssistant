@@ -31,3 +31,8 @@ def page_not_found(e):
     response = jsonify({'error': 'not found'})
     response.status_code = 404
     return response
+
+
+@api.app_errorhandler(401)
+def unauthorized_handler(e):
+    return unauthorized("Invalid credentials")
