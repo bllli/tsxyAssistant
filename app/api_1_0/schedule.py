@@ -23,7 +23,7 @@ def get_schedule():
         """
         today = date.today()
         return '1' if today.month < 9 else '0'
-    if not g.current_user.is_anonymous:
+    if g.current_user.is_anonymous:
         return unauthorized('Invalid credentials')
     d = sc.get_schedule(g.current_user.school_code, school_year(), semester())
     return jsonify(d)
