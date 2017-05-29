@@ -25,5 +25,9 @@ def get_schedule():
         return '1' if today.month < 9 else '0'
     if g.current_user.is_anonymous:
         return unauthorized('Invalid credentials')
+    if g.current_user.school_code is None:
+        response = jsonify({'error': 'student id not found'})
+        response.status_code = 404
+        return response
     d = sc.get_schedule(g.current_user.school_code, school_year(), semester())
     return jsonify(d)
