@@ -23,8 +23,8 @@
 ```json
 {
   "id": 1,
-  "last_seen": "Fri, 26 May 2017 09:14:42 GMT",
-  "member_since": "Fri, 26 May 2017 09:14:42 GMT",
+  "last_seen": "2017-05-26 17:14:42 CST",
+  "member_since": "2017-05-26 17:14:42 CST",
   "school_code": "4140200000",
   "url": "http://127.0.0.1:5000/api/v1.0/users/1",
   "username": null
@@ -41,6 +41,9 @@ url|用户信息url|string|
 school_code|学号|string|十位纯数字
 member_since|注册时间|string|
 last_seen|上次访问时间|string|
+
+时间格式化字符串为`%Y-%m-%d %H:%M:%S %Z`  
+意为:年-月-日 24进制小时-分钟-秒数 时区代号
 
 # API
 ## 通过用户id获取用户信息

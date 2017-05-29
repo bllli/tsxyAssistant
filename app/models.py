@@ -161,6 +161,12 @@ class _Class(db.Model):
         return '<_Class %r>' % self.name
 
 
+class ScheduleCache(db.Model):
+    __tablename__ = 'schedule_caches'
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.DateTime(), default=datetime.utcnow)
+
+
 class Course(db.Model):
     __tablename__ = 'courses'
     id = db.Column(db.Integer, primary_key=True)
@@ -277,13 +283,20 @@ class User(UserMixin, db.Model):
         db.session.add(self)
 
     def to_json(self):
+        def localtime(utc_time):
+            if not isinstance(utc_time, type(datetime.utcnow())):
+                return None
+            from pytz import timezone
+            local_time = utc_time.replace(tzinfo=timezone('UTC')).astimezone(timezone('Asia/Chongqing'))
+            return local_time.strftime('%Y-%m-%d %H:%M:%S %Z')
+
         json_user = {
             'id': self.id,
             'url': url_for('api.get_user', id=self.id, _external=True),
             'school_code': self.school_code,
             'username': self.username,
-            'member_since': self.member_since,
-            'last_seen': self.last_seen,
+            'member_since': localtime(self.member_since),
+            'last_seen': localtime(self.last_seen),
         }
         return json_user
 
