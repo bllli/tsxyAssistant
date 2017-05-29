@@ -45,6 +45,64 @@ last_seen|上次访问时间|string|
 时间格式化字符串为`%Y-%m-%d %H:%M:%S %Z`  
 意为:年-月-日 24进制小时-分钟-秒数 时区代号
 
+## 课程表
+### 课程表json
+json实例: [文件过大, 请点击此链接查看](example/Schedule.json)
+
+```json
+{
+  "class_code": null,
+  "class_name": "14计本1",
+  "department": null, 
+  "grade": null, 
+  "major": null, 
+  "school_year": "2016", 
+  "semester": "1",
+  "courses": [
+    {
+      "name": "C#程序设计A", 
+      "nickname": null, 
+      "parity": null, 
+      "teacher": "张铁军", 
+      "week": [], 
+      "week_raw": "1-7", 
+      "when_code": "044", 
+      "where": null, 
+      "which_room": "A305", 
+      "worth": null
+    }, 
+    ...
+  ]
+  
+}
+```
+
+### 字段解释
+#### json主体
+字段名|字段说明|类型|备注
+---|---|---|---
+class_code|班级代码|string|
+class_name|班级名|string|
+department|院/系|string|
+grade|||
+major|专业|string|
+school_year|学年|string|2016代表2016-2017学年
+semester|学期|string|'0':上学期 '1'下学期
+courses|课程|列表|
+#### 课程json
+字段名|字段说明|类型|备注
+---|---|---|---
+name|课程名称|string|
+nickname|课程昵称|string|如"毛泽东思想和中国特色社会主义理论体系概论"的昵称为"毛概"
+parity|单双周|string|"单周" "双周" 或null
+teacher|教师姓名|string|
+week|解析后的上课周次信息|列表|列表内为数字
+week_raw|未解析的上课周次信息|string|如1-7代表1到7周, 
+when_code|上课时间信息|string|三位数字,第一位为0, 第二位星期几, 第三位第几节 如044代表周四第四节 
+where|上课位置|string|
+which_room|上课教室|string|如:A305 
+worth|学分|string|
+
 # API
 ## 通过用户id获取用户信息
 ### 请求地址 
@@ -91,3 +149,15 @@ see: [错误列表](#错误列表)
   "message": "Unconfirmed account"
 }
 ```
+
+## 通过登录信息获取课程表
+### 请求地址 
+`v1.0/schedule/get-schedule`
+### 接口描述
+通过 HTTP Basic Auth 获取课程表
+### 请求类型
+HTTP GET
+### 请求参数
+无
+### 正确返回json
+操作正确即返回[课程json](#课程表json)
