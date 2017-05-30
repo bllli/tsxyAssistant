@@ -5,6 +5,7 @@ from ..models import User
 from .authentication import auth
 from .errors import unauthorized
 from tsxypy.ScheduleCatcherFromStuId import ScheduleCatcherFromStuId
+from tsxypy.Exception import NoneScheduleException, NetException
 from datetime import date
 
 sc = ScheduleCatcherFromStuId()
@@ -26,8 +27,17 @@ def get_schedule():
     if g.current_user.is_anonymous:
         return unauthorized('Invalid credentials')
     if g.current_user.school_code is None:
-        response = jsonify({'error': 'student id not found'})
+        response = jsonify({'error': '该用户未设定学号'})
         response.status_code = 404
         return response
-    d = sc.get_schedule(g.current_user.school_code, school_year(), semester())
+    try:
+        d = sc.get_schedule(g.current_user.school_code, school_year(), semester())
+    except NoneScheduleException:
+        response = jsonify({'error': '该用户没有最新课表!'})
+        response.status_code = 404
+        return response
+    except NetException:
+        response = jsonify({'error': '教务系统出现网络问题'})
+        response.status_code = 502
+        return response
     return jsonify(d)
