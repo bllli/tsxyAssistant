@@ -81,6 +81,8 @@ json实例: [文件过大, 请点击此链接查看](example/Schedule.json)
 #### json主体
 字段名|字段说明|类型|备注
 ---|---|---|---
+*cache*|是否使用了缓存|布尔|true/false
+*cache-date*|缓存时间|string|
 class_code|班级代码|string|
 class_name|班级名|string|
 department|院/系|string|
@@ -155,6 +157,10 @@ see: [错误列表](#错误列表)
 `v1.0/schedule/get-schedule`
 ### 接口描述
 通过 HTTP Basic Auth 获取课程表
+
+课程表缓存:当两天内相同用户的课程表将不会从教务系统获取新的, 而是返回缓存的课程表.
+
+如需直接获取新课程表, 请讲url换为 `v1.0/schedule/get-schedule-without-cache`
 ### 请求类型
 HTTP GET
 ### 请求参数
