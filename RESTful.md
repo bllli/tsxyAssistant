@@ -160,7 +160,8 @@ see: [错误列表](#错误列表)
 
 课程表缓存:当两天内相同用户的课程表将不会从教务系统获取新的, 而是返回缓存的课程表.
 
-如需直接获取新课程表, 请讲url换为 `v1.0/schedule/get-schedule-without-cache`
+如需不使用缓存, 直接获取新课程表, url加上参数 "use_cache=False" 如 `v1.0/schedule/get-schedule?use_cache=False`  
+如需指定查询学号的课表, 在url上加参数 "stu_id=学号" 如 `api/v1.0/schedule/get-schedule?stu_id=0000000000`
 ### 请求类型
 HTTP GET
 ### 请求参数

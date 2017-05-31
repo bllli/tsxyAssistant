@@ -12,22 +12,29 @@ from datetime import date, datetime
 sc = ScheduleCatcherFromStuId()
 
 
-@api.route('/schedule/get-schedule')
-def get_schedule(use_cache=True):
-    def school_year():
-        today = date.today()
-        return today.year if today.month >= 9 else today.year-1
+def school_year():
+    today = date.today()
+    return today.year if today.month >= 9 else today.year - 1
 
-    def semester():
-        """
-        钦定一年的9月前未下半学期, 9月后为上半学期
-        :return: '1':下学期, '0':上学期
-        """
-        today = date.today()
-        return '1' if today.month < 9 else '0'
+
+def semester():
+    """
+    钦定一年的9月前未下半学期, 9月后为上半学期
+    :return: '1':下学期, '0':上学期
+    """
+    today = date.today()
+    return '1' if today.month < 9 else '0'
+
+
+@api.route('/schedule/get-schedule')
+def get_schedule():
+    use_cache = True if not request.args.get('use_cache') else False
+    school_code = request.args.get('stu_id')
+
     if g.current_user.is_anonymous:
         return unauthorized('Invalid credentials')
-    school_code = g.current_user.school_code
+    if not school_code:
+        school_code = g.current_user.school_code
     if school_code is None:
         response = jsonify({'error': '该用户未设定学号'})
         response.status_code = 404
@@ -57,8 +64,3 @@ def get_schedule(use_cache=True):
         response.status_code = 502
         return response
     return jsonify(d)
-
-
-@api.route('/schedule/get-schedule-without-cache')
-def get_schedule_without_cache():
-    return get_schedule(use_cache=False)
