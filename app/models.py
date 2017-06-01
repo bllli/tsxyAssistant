@@ -170,26 +170,43 @@ class Temp(db.Model):
     date = db.Column(db.DateTime(), default=datetime.utcnow)
 
     @staticmethod
-    def set_schedule_cache_for_stu_id(stu_id, schedule):
-        temps = Temp.query.filter_by(mark='schedule_stu_id', identify=stu_id).all()
+    def set_temp(mark, identify, content):
+        temps = Temp.query.filter_by(mark=mark, identify=identify).all()
         for t in temps:
             db.session.delete(t)
-        t = Temp(mark='schedule_stu_id', identify=stu_id, content=str(schedule))
+        t = Temp(mark=mark, identify=identify, content=str(content))
         db.session.add(t)
 
     @staticmethod
-    def get_schedule_cache_for_stu_id(stu_id):
-        t = Temp.query.filter_by(mark='schedule_stu_id', identify=stu_id).first()
+    def get_temp(mark, identify):
+        t = Temp.query.filter_by(mark=mark, identify=identify).first()
         if not t:
             return None
         delta = datetime.utcnow() - t.date
         if delta.days < 2:
-            t_dict = eval(t.content)
-            t_dict['cache'] = True
-            t_dict['cache-date'] = localtime(t.date)
-            return t_dict
+            content = eval(t.content)
+            if isinstance(content, type({})):
+                content['cache'] = True
+                content['cache-date'] = localtime(t.date)
+            return content
         else:
             return None
+
+    @staticmethod
+    def set_schedule_cache_for_stu_id(stu_id, schedule):
+        Temp.set_temp(mark='schedule_stu_id', identify=stu_id, content=schedule)
+
+    @staticmethod
+    def get_schedule_cache_for_stu_id(stu_id):
+        return Temp.get_temp(mark='schedule_stu_id', identify=stu_id)
+
+    @staticmethod
+    def set_school_structure(school_structure):
+        Temp.set_temp(mark='school_structure', identify=None, content=school_structure)
+
+    @staticmethod
+    def get_school_structure():
+        return Temp.get_temp(mark='school_structure', identify=None)
 
 
 class Course(db.Model):
