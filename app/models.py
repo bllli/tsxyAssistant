@@ -161,12 +161,35 @@ class _Class(db.Model):
         return '<_Class %r>' % self.name
 
 
-class ScheduleCacheForStuID(db.Model):
-    __tablename__ = 'schedule_caches_stu_id'
+class Temp(db.Model):
+    __tablename__ = 'temp'
     id = db.Column(db.Integer, primary_key=True)
-    stu_id = db.Column(db.String)
-    date = db.Column(db.DateTime(), default=datetime.utcnow)
+    mark = db.Column(db.String)
+    identify = db.Column(db.String)
     content = db.Column(db.Text)
+    date = db.Column(db.DateTime(), default=datetime.utcnow)
+
+    @staticmethod
+    def set_schedule_cache_for_stu_id(stu_id, schedule):
+        temps = Temp.query.filter_by(mark='schedule_stu_id', identify=stu_id).all()
+        for t in temps:
+            db.session.delete(t)
+        t = Temp(mark='schedule_stu_id', identify=stu_id, content=str(schedule))
+        db.session.add(t)
+
+    @staticmethod
+    def get_schedule_cache_for_stu_id(stu_id):
+        t = Temp.query.filter_by(mark='schedule_stu_id', identify=stu_id).first()
+        if not t:
+            return None
+        delta = datetime.utcnow() - t.date
+        if delta.days < 2:
+            t_dict = eval(t.content)
+            t_dict['cache'] = True
+            t_dict['cache-date'] = localtime(t.date)
+            return t_dict
+        else:
+            return None
 
 
 class Course(db.Model):

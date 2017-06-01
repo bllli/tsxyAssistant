@@ -2,7 +2,7 @@
 from flask import jsonify, request, current_app, url_for, g
 from . import api
 from .. import db
-from ..models import User, ScheduleCacheForStuID, localtime
+from ..models import User, Temp, localtime
 from .authentication import auth
 from .errors import unauthorized
 from tsxypy.ScheduleCatcherFromStuId import ScheduleCatcherFromStuId
@@ -28,7 +28,7 @@ def semester():
 
 @api.route('/schedule/get-schedule')
 def get_schedule():
-    use_cache = True if not request.args.get('use_cache') else False
+    use_cache = False if request.args.get('use_cache') == "False" else True
     school_code = request.args.get('stu_id')
 
     if g.current_user.is_anonymous:
@@ -40,18 +40,12 @@ def get_schedule():
         response.status_code = 404
         return response
     if use_cache:
-        cache = ScheduleCacheForStuID.query.filter_by(stu_id=school_code).first()
-        if cache:
-            delta = datetime.utcnow() - cache.date
-            if delta.days < 2:
-                cache_dict = eval(cache.content)
-                cache_dict['cache'] = True
-                cache_dict['cache-date'] = localtime(cache.date)
-                return jsonify(cache_dict)
+        schedule = Temp.get_schedule_cache_for_stu_id(school_code)
+        if schedule:
+            return jsonify(schedule)
     try:
         d = sc.get_schedule(school_code, school_year(), semester())
-        c = ScheduleCacheForStuID(content=str(d), stu_id=school_code)
-        db.session.add(c)
+        Temp.set_schedule_cache_for_stu_id(school_code, d)
         d['cache'] = False
         d['cache-date'] = None
     except NoneScheduleException as e:
