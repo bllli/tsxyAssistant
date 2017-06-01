@@ -105,6 +105,84 @@ where|上课位置|string|
 which_room|上课教室|string|如:A305 
 worth|学分|string|
 
+
+## 学校结构
+### 学校结构json
+json实例:[文件过大, 请点击链接查看](example/Structure.json)
+
+```json
+{
+  "cache": true,
+  "cache-date": "2017-06-01 10:45:39 CST",
+  "school_years": [
+    {
+      "year": "2013",
+      "departments": [
+        {
+          "code": "31",
+          "name": "机电工程系",
+          "specialties": [
+            {
+              "code": "0105",
+              "name": "机械设计制造及其自动化",
+              "classes": [
+                {
+                  "code": "2013010501",
+                  "name": "13机本1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+> 按现在抓取的数据分析来看, 各个年级的院系部代码和专业代码都是不变的.  
+> 但为稳妥起见(以防抽风改成不一致), 仍按照教务系统原有的从年份开始设计json.  
+> 学校-年份-系别(院系部)-专业-班级.  
+> classes = {'name': '14计本1', 'code': '2014020601'}  
+> specialty = {'name': '计算机专业与技术', 'code': '4001', 'classes': [c1, c2...]}  
+> department = {'name': '计算机专业与技术系', 'code': '40', 'specialties': [s1, s2...]}  
+> school_year = {'year': '2014', 'departments': [department1, department2...]}  
+> school = {'school_years': [school_year1, school_year2...]}
+
+### 字段解释
+#### json主体
+字段名|字段说明|类型|备注
+---|---|---|---
+*cache*|是否使用了缓存|布尔|true/false
+*cache-date*|缓存时间|string|
+school_years|学年|列表|
+
+#### 学年json
+字段名|字段说明|类型|备注
+---|---|---|---
+year|学年|string|四位年
+departments|该学年的系|列表|目前每个学年的系都一样
+
+#### 系别json
+字段名|字段说明|类型|备注
+---|---|---|---
+code|系别代号|string|貌似都是两位数字
+name|系名称|string|
+specialties|该系的专业|列表|
+
+#### 专业json
+字段名|字段说明|类型|备注
+---|---|---|---
+code|专业代号|string|貌似都是四位数字
+name|专业名称|string|
+classes|该专业下的班级|列表|
+
+#### 班级json
+字段名|字段说明|类型|备注
+---|---|---|---
+code|班级代号|string|貌似都是十位数字
+name|班级名称|string|
+
 # API
 ## 通过用户id获取用户信息
 ### 请求地址 
@@ -159,12 +237,32 @@ see: [错误列表](#错误列表)
 通过 HTTP Basic Auth 获取课程表
 
 课程表缓存:当两天内相同用户的课程表将不会从教务系统获取新的, 而是返回缓存的课程表.
-
-如需不使用缓存, 直接获取新课程表, url加上参数 "use_cache=False" 如 `v1.0/schedule/get-schedule?use_cache=False`  
-如需指定查询学号的课表, 在url上加参数 "stu_id=学号" 如 `api/v1.0/schedule/get-schedule?stu_id=0000000000`
 ### 请求类型
 HTTP GET
 ### 请求参数
-无
+参数名(key)|说明|value示例|备注
+---|---|---|---
+use_cache|是否使用缓存|False 或 True|当值为False时, 不使用服务端缓存.不填写或其他任意值均为使用缓存
+stu_id|学号|学生学号|
+
+如需不使用缓存, 直接获取新课程表, url加上参数 "use_cache=False" 如 `v1.0/schedule/get-schedule?use_cache=False`  
+如需指定查询学号的课表, 在url上加参数 "stu_id=学号" 如 `api/v1.0/schedule/get-schedule?stu_id=0000000000`
 ### 正确返回json
 操作正确即返回[课程json](#课程表json)
+
+## 获取学校结构
+这是一大坨数据, 100K左右, 请注意缓存使用
+### 请求地址 
+`v1.0/school/get-structure`
+### 接口描述
+获取学校结构Json
+### 请求类型
+HTTP GET
+### 请求参数
+如需不使用服务端缓存, 请在url后加上参数 "?use_cache=False"
+
+参数名(key)|说明|value示例|备注
+---|---|---|---
+use_cache|是否使用缓存|False|当值为False时, 不使用服务端缓存.不填写或其他任意值均为使用缓存
+### 正确返回json
+[学校结构json](#学校结构json)
