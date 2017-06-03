@@ -9,8 +9,6 @@ from tsxypy.ScheduleCatcherFromStuId import ScheduleCatcherFromStuId
 from tsxypy.Exception import NoneScheduleException, NetException
 from datetime import date, datetime
 
-sc = ScheduleCatcherFromStuId()
-
 
 def school_year():
     today = date.today()
@@ -44,6 +42,7 @@ def get_schedule():
         if schedule:
             return jsonify(schedule)
     try:
+        sc = ScheduleCatcherFromStuId()
         d = sc.get_schedule(school_code, school_year(), semester())
         Temp.set_schedule_cache_for_stu_id(school_code, d)
         d['cache'] = False
