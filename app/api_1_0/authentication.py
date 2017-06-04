@@ -33,9 +33,9 @@ def verify_password(user_identity, password):
         user = User.query.filter_by(username=user_identity).first()
     if not user:
         try:
-            if len(user_identity) == 10 and tsxypy.is_tsxy_stu(user_identity, password):
-
-                user = User(school_code=user_identity, password=password)
+            user_code = tsxypy.is_tsxy_stu(user_identity, password)
+            if len(user_identity) == 10 and user_code:
+                user = User(school_code=user_identity, password=password, user_code=user_code)
                 user.confirmed = True
                 db.session.add(user)
                 db.session.commit()
