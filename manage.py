@@ -63,6 +63,7 @@ def deploy():
 
     # create user roles
     Role.insert_roles()
+    School.insert_school_structure()
 
 
 if __name__ == '__main__':
