@@ -10,18 +10,18 @@ from tsxypy.Exception import NoneScheduleException, NetException
 from datetime import date, datetime
 
 
-def school_year():
+def this_school_year():
     today = date.today()
     return today.year if today.month >= 9 else today.year - 1
 
 
-def semester():
+def this_semester():
     """
-    钦定一年的9月前未下半学期, 9月后为上半学期
+    钦定一年9~2月为上半学期, 3~8月为下半学期
     :return: '1':下学期, '0':上学期
     """
     today = date.today()
-    return '1' if today.month < 9 else '0'
+    return '1' if 3 < today.month < 9 else '0'
 
 
 @api.route('/schedule/get-schedule')
@@ -43,7 +43,7 @@ def get_schedule():
             return jsonify(schedule)
     try:
         sc = ScheduleCatcherFromStuId()
-        d = sc.get_schedule(school_code, school_year(), semester())
+        d = sc.get_schedule(school_code, this_school_year(), this_semester())
         Temp.set_schedule_cache_for_stu_id(school_code, d)
         d['cache'] = False
         d['cache-date'] = None
