@@ -183,6 +183,20 @@ classes|该专业下的班级|列表|
 code|班级代号|string|貌似都是十位数字
 name|班级名称|string|
 
+## 学年学期信息
+### 学年学期json
+```json
+{
+  "school_year": "2016",
+  "semester": "1"
+}
+```
+### 字段解释
+字段名|字段说明|类型|备注
+---|---|---|---
+school_year|学年|string|"2016" 意为：“2016-2017学年”
+semester|学期|string|"1" 意为下半学期; "0" 意为上半学期
+
 # API
 ## 通过用户id获取用户信息
 ### 请求地址 
@@ -266,3 +280,15 @@ HTTP GET
 use_cache|是否使用缓存|False|当值为False时, 不使用服务端缓存.不填写或其他任意值均为使用缓存
 ### 正确返回json
 [学校结构json](#学校结构json)
+
+## 获取学期学年信息
+### 请求地址
+`v1.0/school/get-semester`
+### 接口描述
+获取当前学年、学期Json
+### 请求类型
+HTTP GET
+### 请求参数
+无
+### 正确返回json
+[学年学期json](#学年学期json)
