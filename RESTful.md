@@ -197,6 +197,66 @@ name|班级名称|string|
 school_year|学年|string|"2016" 意为：“2016-2017学年”
 semester|学期|string|"1" 意为下半学期; "0" 意为上半学期
 
+## 成绩数据
+### 成绩数据json
+成绩数据json实例: [文件过大，请点击链接查看](example/Score.json)
+```json
+{
+  "department": "计算机科学与技术系",
+  "major": "14计本1",
+  "stu_id": "4140206139",
+  "user_code": "201400000407"
+  "score_tables": [
+    {
+      "semester": "2014-2015学年第一学期",
+      "scores": [
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "1",
+          "name": "大学英语A（一）",
+          "ps": "",
+          "quale": "初修",
+          "score": "70.0",
+          "type": "公共课/必修课",
+          "worth": "4.0"
+        },
+        ...
+      ]
+    },
+    ...
+  ],
+}
+
+### 字段解释
+#### json主体
+字段名|字段说明|类型|备注
+---|---|---|---
+department|系别|string|
+major|班级代号（年级专业班级一体）|string|
+stu_id|学号|string|
+user_code|用户编号|string|
+score_tables|成绩表|列表|按学期分隔的成绩表
+
+#### 成绩表json
+字段名|字段说明|类型|备注
+---|---|---|---
+semester|学期|string|当前成绩表的学期
+scores|分数|列表|
+
+#### 分数json
+字段名|字段说明|类型|备注
+---|---|---|---
+id|在成绩表中的编号|string|没啥用，可以不解析
+name|课程名|string|
+worth|学分|string|
+type|课程类别|string|公共课、必修课
+quale|修读性质|string|初修/重修
+exam_method|考核方式|string|考试/考察
+get_method|取得方式|string|初修取得
+score|成绩|string|分数/合格
+ps|备注|string|一般都是空
+
 # API
 ## 通过用户id获取用户信息
 ### 请求地址 
@@ -292,3 +352,34 @@ HTTP GET
 无
 ### 正确返回json
 [学年学期json](#学年学期json)
+
+## 通过登录信息获取当前用户的成绩信息
+### 请求地址
+`v1.0/score`
+### 接口描述
+通过 HTTP Basic Auth 获取该用户的成绩信息
+### 请求类型
+HTTP GET
+### 请求参数
+参数名(key)|说明|value示例|备注
+---|---|---|---
+score_type|分数类型|all new|all 表示全部成绩， new 表示最新成绩
+
+### 正确返回json
+[成绩数据json](#成绩数据json)
+
+### 异常返回json
+该用户没有用户代号 http相应码404
+以现在登录方式来说， 这是一个不应该出现的错误
+```json
+{
+    "error": "该用户没有用户代号"
+}
+```
+
+教务系统出现网络问题 http响应吗502
+```json
+{
+    "error": "教务系统出现网络问题"
+}
+```
