@@ -3,15 +3,15 @@
 
 确认登入用户的身份
 """
+import tsxypy
 from flask import g, jsonify, abort
 from flask_httpauth import HTTPBasicAuth
-from ..models import User, AnonymousUser
+from tsxypy.Exception import TsxyException
+
 from . import api
 from .errors import unauthorized, forbidden
 from .. import db
-import tsxypy
-from tsxypy.Exception import TsxyException
-
+from ..models import User, AnonymousUser
 
 auth = HTTPBasicAuth()
 

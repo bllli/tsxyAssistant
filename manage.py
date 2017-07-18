@@ -22,10 +22,12 @@ Examples:
         $ python manage.py runserver
 """
 import os
+
+from flask_migrate import Migrate, MigrateCommand
+from flask_script import Manager, Shell
+
 from app import create_app, db
 from app.models import User, Role, Permission, School
-from flask_script import Manager, Shell
-from flask_migrate import Migrate, MigrateCommand
 
 COV = None
 if os.environ.get('FLASK_COVERAGE'):
@@ -81,7 +83,7 @@ def test(coverage=False):
 def deploy():
     """部署服务器 初始化数据库"""
     from flask_migrate import upgrade
-    from app.models import Role, User
+    from app.models import Role
 
     # migrate database to latest revision
     upgrade()

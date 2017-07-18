@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from flask import jsonify, request
-from . import api
-from ..models import Temp
 from tsxypy.ScheduleCatcher import ScheduleCatcher
+
+from . import api
 from .schedule import this_semester, this_school_year
+from ..models import Temp
 
 
 @api.route('/school/get-structure')

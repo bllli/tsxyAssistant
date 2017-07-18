@@ -12,13 +12,14 @@ Attributes:
 
 """
 from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from flask import current_app, request, url_for
-from flask_login import UserMixin, AnonymousUserMixin
-from app.exceptions import ValidationError
-from . import db, login_manager
+
 import tsxypy
+from flask import current_app, url_for
+from flask_login import UserMixin, AnonymousUserMixin
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from werkzeug.security import generate_password_hash, check_password_hash
+
+from . import db, login_manager
 
 
 class Permission:

@@ -1,9 +1,9 @@
-from flask import jsonify, request, current_app, url_for, g
+from flask import jsonify, g
 
 from . import api
-from ..models import User
 from .authentication import auth
 from .errors import unauthorized
+from ..models import User
 
 
 @api.route('/users/<int:id>')
