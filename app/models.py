@@ -1,3 +1,16 @@
+# -*- coding:utf-8 -*-
+"""models.py
+
+用于定义ORM中用到的类、关系及某些表中的初始数据及工具函数。
+
+新建数据库时应该依次调用::
+
+    Role.insert_roles()
+    School.insert_school_structure()
+
+Attributes:
+
+"""
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -9,6 +22,7 @@ import tsxypy
 
 
 class Permission:
+    """权限类 用于规定权限的二进制数值"""
     FOLLOW = 0x01
     COMMENT = 0x02
     WRITE_ARTICLES = 0x04
@@ -17,6 +31,9 @@ class Permission:
 
 
 class Role(db.Model):
+    """角色类
+    每个用户的身份信息、 权限
+    """
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
@@ -26,6 +43,9 @@ class Role(db.Model):
 
     @staticmethod
     def insert_roles():
+        """向角色表插入角色数据
+        :return: N/A
+        """
         roles = {
             'User': (Permission.FOLLOW |
                      Permission.COMMENT |
@@ -62,6 +82,9 @@ class School(db.Model):
 
     @staticmethod
     def insert_school_structure():
+        """使用抓取到的学校院系部结构生成表结构
+        :return: N/A
+        """
         import os
         base_dir = os.getcwd()
         tmp_dir = os.path.join(base_dir, 'tmp')
@@ -112,6 +135,7 @@ class School(db.Model):
 
 
 class Department(db.Model):
+    """学院/系别/部门"""
     __tablename__ = 'departments'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
@@ -125,6 +149,7 @@ class Department(db.Model):
 
 
 class Specialty(db.Model):
+    """专业"""
     __tablename__ = 'specialties'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
@@ -144,6 +169,7 @@ registrations = db.Table('registrations',
 
 
 class _Class(db.Model):
+    """班级"""
     __tablename__ = 'classes'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
@@ -162,6 +188,7 @@ class _Class(db.Model):
 
 
 class Temp(db.Model):
+    """缓存表 缓存字符串"""
     __tablename__ = 'temp'
     id = db.Column(db.Integer, primary_key=True)
     mark = db.Column(db.String)
@@ -171,6 +198,13 @@ class Temp(db.Model):
 
     @staticmethod
     def set_temp(mark, identify, content):
+        """放置缓存
+
+        :param string mark: 标记 声明缓存的用途
+        :param string identify: 用户标识 用于区分不同用户的缓存记录
+        :param content: 内容 多为dict
+        :return: None
+        """
         temps = Temp.query.filter_by(mark=mark, identify=identify).all()
         for t in temps:
             db.session.delete(t)
@@ -179,6 +213,12 @@ class Temp(db.Model):
 
     @staticmethod
     def get_temp(mark, identify):
+        """取出缓存
+
+        :param mark: 标记 声明缓存的用途
+        :param identify: 指定用户标示
+        :return: 之前缓存的对象 (default:None)
+        """
         t = Temp.query.filter_by(mark=mark, identify=identify).first()
         if not t:
             return None
@@ -194,10 +234,21 @@ class Temp(db.Model):
 
     @staticmethod
     def set_schedule_cache_for_stu_id(stu_id, schedule):
+        """缓存学号对应的课程表
+
+        :param string stu_id: 学生学号
+        :param dict schedule: 课程表词典
+        :return: None
+        """
         Temp.set_temp(mark='schedule_stu_id', identify=stu_id, content=schedule)
 
     @staticmethod
     def get_schedule_cache_for_stu_id(stu_id):
+        """通过学号获取缓存的课程表
+
+        :param string stu_id: 学生学号
+        :return: 课程表dict 无缓存或缓存过期则返回None
+        """
         return Temp.get_temp(mark='schedule_stu_id', identify=stu_id)
 
     @staticmethod
@@ -210,6 +261,13 @@ class Temp(db.Model):
 
 
 class Course(db.Model):
+    """课程
+
+    Args:
+        id (int): 课程编号.
+
+    :argument id:
+    """
     __tablename__ = 'courses'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128))
@@ -226,9 +284,10 @@ class Course(db.Model):
 
 
 class User(UserMixin, db.Model):
+    """用户model"""
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    school_code = db.Column(db.String(16), unique=True, index=True)
+    school_code = db.Column(db.String(16), unique=True, index=True)  # 学号
     user_code = db.Column(db.String(16), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
     name = db.Column(db.String(64))
@@ -326,6 +385,21 @@ class User(UserMixin, db.Model):
         db.session.add(self)
 
     def to_json(self):
+        """将本对象转换为json
+
+        ============ ============= ==== ====
+        字段名       字段说明      类型 备注
+        ============ ============= ==== ====
+        id           用户id        int
+        username     用户昵称       str  允许为空
+        url          用户信息url    str
+        school_code  学号          str  10位数字
+        member_since 注册时间       str
+        last_seen    上次访问时间    str
+        ============ ============= ==== ====
+
+        :return: 用户信息json
+        """
         json_user = {
             'id': self.id,
             'url': url_for('api.get_user', id=self.id, _external=True),
@@ -337,12 +411,22 @@ class User(UserMixin, db.Model):
         return json_user
 
     def generate_auth_token(self, expiration):
+        """生成认证token
+
+        :param expiration: 生存期 单位为秒
+        :return:
+        """
         s = Serializer(current_app.config['SECRET_KEY'],
                        expires_in=expiration)
         return s.dumps({'id': self.id}).decode('ascii')
 
     @staticmethod
     def verify_auth_token(token):
+        """验证认证token
+
+        :param token: 之前获取的token
+        :return: 如通过验证，返回登录用户的对象
+        """
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token)
@@ -355,6 +439,10 @@ class User(UserMixin, db.Model):
 
 
 class AnonymousUser(AnonymousUserMixin):
+    """陌生人
+
+    没有任何权限
+    """
     def can(self, permissions):
         return False
 
@@ -370,6 +458,11 @@ def load_user(user_id):
 
 
 def localtime(utc_time):
+    """获取utc时间转换为的亚洲时间
+
+    :param utc_time: utc时间
+    :return: 亚洲时间
+    """
     if not isinstance(utc_time, type(datetime.utcnow())):
         return None
     from pytz import timezone

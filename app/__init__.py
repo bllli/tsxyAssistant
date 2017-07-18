@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 from flask import Flask
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
@@ -13,6 +14,13 @@ login_manager.login_view = 'auth.login'
 
 
 def create_app(config_name):
+    """app工厂
+
+    用于生成所需的app对象
+
+    :param string config_name: 配置名称
+    :return: app
+    """
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)

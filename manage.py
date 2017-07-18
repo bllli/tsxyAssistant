@@ -1,5 +1,32 @@
 #!/usr/bin/env python
+# -*- coding:utf-8 -*-
+"""服务器脚本
+
+开启、调试、部署, 并便于启用测试环境。
+
+Examples:
+    进行单元测试::
+
+        $ python manage.py test
+
+    部署/初始化::
+
+        $ python manage.py deploy
+
+    进入shell调试::
+
+        $ python manage.py shell
+
+    启用服务器::
+
+        $ python manage.py runserver
+"""
 import os
+from app import create_app, db
+from app.models import User, Role, Permission, School
+from flask_script import Manager, Shell
+from flask_migrate import Migrate, MigrateCommand
+
 COV = None
 if os.environ.get('FLASK_COVERAGE'):
     import coverage
@@ -13,26 +40,24 @@ if os.path.exists('.env'):
         if len(var) == 2:
             os.environ[var[0]] = var[1]
 
-from app import create_app, db
-from app.models import User, Role, Permission, School
-from flask_script import Manager, Shell
-from flask_migrate import Migrate, MigrateCommand
-
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 manager = Manager(app)
 migrate = Migrate(app, db)
 
 
 def make_shell_context():
+    """为Flask-Script的shell功能导入model类"""
     return dict(app=app, db=db, User=User, Role=Role,
                 Permission=Permission, School=School)
+
+
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
 
 
 @manager.command
 def test(coverage=False):
-    """Run the unit tests."""
+    """执行单元测试."""
     if coverage and not os.environ.get('FLASK_COVERAGE'):
         import sys
         os.environ['FLASK_COVERAGE'] = '1'
@@ -54,7 +79,7 @@ def test(coverage=False):
 
 @manager.command
 def deploy():
-    """Run deployment tasks."""
+    """部署服务器 初始化数据库"""
     from flask_migrate import upgrade
     from app.models import Role, User
 

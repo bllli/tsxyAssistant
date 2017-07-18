@@ -1,24 +1,34 @@
 # -*- coding: utf-8 -*-
-from flask import jsonify, request, current_app, url_for, g
-from . import api
-from .. import db
-from ..models import User, Temp, localtime
-from .authentication import auth
-from .errors import unauthorized
-from tsxypy.ScheduleCatcherFromStuId import ScheduleCatcherFromStuId
+"""
+schedule.py
+====
+课程表相关接口
+"""
+from datetime import date
+
+from flask import jsonify, request, g
 from tsxypy.Exception import NoneScheduleException, NetException
-from datetime import date, datetime
+from tsxypy.ScheduleCatcherFromStuId import ScheduleCatcherFromStuId
+
+from . import api
+from .errors import unauthorized
+from ..models import Temp
 
 
 def this_school_year():
+    """判断当前学年
+
+    :return: 当前学年
+    """
     today = date.today()
     return today.year if today.month >= 9 else today.year - 1
 
 
 def this_semester():
-    """
+    """判断本学期
+
     钦定一年9~2月为上半学期, 3~8月为下半学期
-    :return: '1':下学期, '0':上学期
+    :return: '1':下学期; '0':上学期
     """
     today = date.today()
     return '1' if 3 < today.month < 9 else '0'
@@ -26,6 +36,7 @@ def this_semester():
 
 @api.route('/schedule/get-schedule')
 def get_schedule():
+    """获取课程表"""
     use_cache = False if request.args.get('use_cache') == "False" else True
     school_code = request.args.get('stu_id')
 

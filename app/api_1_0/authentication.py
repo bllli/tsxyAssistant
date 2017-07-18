@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""认证
+
+确认登入用户的身份
+"""
 from flask import g, jsonify, abort
 from flask_httpauth import HTTPBasicAuth
 from ..models import User, AnonymousUser
@@ -14,11 +18,11 @@ auth = HTTPBasicAuth()
 
 @auth.verify_password
 def verify_password(user_identity, password):
-    """
+    """确认用户密码的正确性
     
-    :param user_identity: 可能时
-    :param password: 
-    :return: 
+    :param str user_identity: 用户标识码
+    :param str password: 用户输入的密码
+    :return bool: 是否通过密码验证(是->True;->False)
     """
     if user_identity == '':
         g.current_user = AnonymousUser()
@@ -50,12 +54,22 @@ def verify_password(user_identity, password):
 
 @auth.error_handler
 def auth_error():
+    """登陆错误时会被调用
+
+    :return: 未认证异常Json
+    """
     return unauthorized('Invalid credentials')
 
 
 @api.before_request
 @auth.login_required
 def before_request():
+    """请求前会调用
+
+    过滤掉未经确认的账户
+
+    :return: 未经确认的Json
+    """
     if not g.current_user.is_anonymous and \
             not g.current_user.confirmed:
         return forbidden('Unconfirmed account')
@@ -63,6 +77,12 @@ def before_request():
 
 @api.route('/token')
 def get_token():
+    """获取本用户的认证token
+
+    以*账号密码*成功登陆的用户才能获取token。即不允许通过token获取新token以延长token的生存时间。
+
+    :return:
+    """
     if g.current_user.is_anonymous or g.token_used:
         return unauthorized('Invalid credentials')
     return jsonify({'token': g.current_user.generate_auth_token(
