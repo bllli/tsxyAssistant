@@ -24,11 +24,26 @@ from . import db, login_manager
 
 class Permission:
     """权限类 用于规定权限的二进制数值"""
-    FOLLOW = 0x01
-    COMMENT = 0x02
-    WRITE_ARTICLES = 0x04
-    MODERATE_COMMENTS = 0x08
-    ADMINISTER = 0x80
+    VIEW_SCHEDULE = 0x01  #: 查看课程表
+    VIEW_SCORE = 0x02  #: 查看成绩
+    VIEW_ALL_SCHEDULE = 0x04  #: 查看所有人的课程表
+    VIEW_ALL_SCORE = 0x08  #: 查看所有人的成绩
+    # MODIFY = 0x0f  #: 修改?
+    ADMINISTER = 0x80  #: 管理员权限
+
+    student = VIEW_SCHEDULE | VIEW_SCORE
+    teacher = VIEW_ALL_SCHEDULE | VIEW_ALL_SCORE
+    teacher_v = VIEW_ALL_SCHEDULE | VIEW_ALL_SCORE
+    administrator = 0xff
+
+    @staticmethod
+    def to_json():
+        json_permission = {}
+        for member in dir(Permission):
+            value = eval('Permission.' + member)
+            if isinstance(value, int):
+                json_permission[member] = value
+        return json_permission
 
 
 class Role(db.Model):
@@ -48,14 +63,9 @@ class Role(db.Model):
         :return: N/A
         """
         roles = {
-            'User': (Permission.FOLLOW |
-                     Permission.COMMENT |
-                     Permission.WRITE_ARTICLES, True),
-            'Moderator': (Permission.FOLLOW |
-                          Permission.COMMENT |
-                          Permission.WRITE_ARTICLES |
-                          Permission.MODERATE_COMMENTS, False),
-            'Administrator': (0xff, False)
+            'Student': (Permission.student, True),
+            'Teacher': (Permission.teacher, False),
+            'Administrator': (Permission.administrator, False),
         }
         for r in roles:
             role = Role.query.filter_by(name=r).first()
@@ -68,6 +78,14 @@ class Role(db.Model):
 
     def __repr__(self):
         return '<Role %r>' % self.name
+
+    @staticmethod
+    def to_json():
+        return {
+            'Student': Permission.student,
+            'Teacher': Permission.teacher,
+            'Administrator': Permission.administrator,
+        }
 
 
 class School(db.Model):
@@ -199,6 +217,7 @@ class Temp(db.Model):
 
     @staticmethod
     def set_temp(mark, identify, content):
+        # type: (str, str, object ) -> None
         """放置缓存
 
         :param string mark: 标记 声明缓存的用途
@@ -376,7 +395,7 @@ class User(UserMixin, db.Model):
 
     def can(self, permissions):
         return self.role is not None and \
-            (self.role.permissions & permissions) == permissions
+               (self.role.permissions & permissions) == permissions
 
     def is_administrator(self):
         return self.can(Permission.ADMINISTER)
@@ -408,6 +427,7 @@ class User(UserMixin, db.Model):
             'username': self.username,
             'member_since': localtime(self.member_since),
             'last_seen': localtime(self.last_seen),
+            'role': Role.query.filter_by()
         }
         return json_user
 
@@ -444,11 +464,13 @@ class AnonymousUser(AnonymousUserMixin):
 
     没有任何权限
     """
+
     def can(self, permissions):
         return False
 
     def is_administrator(self):
         return False
+
 
 login_manager.anonymous_user = AnonymousUser
 
