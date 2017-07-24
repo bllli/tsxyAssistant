@@ -1,0 +1,174 @@
+/*首页*/
+#demo{
+	overflow:hidden;
+	margin: 100px 0;
+}
+#demo a img {
+	width: 180px;
+	height: 130px;
+}
+#indemo {
+	float: left;
+	width: 800%;
+}
+#demo1{
+	float: left;
+}
+#demo2 {
+	float: left;
+}
+.imgs a{
+	margin-left: 40px;
+	text-align: center;
+	width: 180px;
+}
+.imgs a span{
+	color: #000000;
+	line-height: 80px;
+	font-size: 16px;
+}
+
+
+/*关于我们*/
+.title1{
+	height: 40px;
+	background: #e6e6e6;
+	border-radius: 5px;
+}
+.title1 img{
+	padding:0 10px;
+}
+.title1 span{
+	font-size: 14px;
+	line-height: 40px;
+	color: #0078ff;
+	font-weight: bold;
+}
+.box{
+	background: #FFFFFF;
+	padding: 10px 0;
+	margin-top: 10px;
+	border: 1px solid #cacaca;
+}
+.box p{
+	padding: 0 20px;
+	font-size: 14px;
+	text-indent: 2em;
+	line-height: 27px;
+}
+
+.box2{
+	border-bottom: 1px solid #cacaca;
+	margin-top:10px ;
+}
+.box2 img{
+	width: 80px;
+	height: 80px;
+	padding: 20px 20px 20px 30px;
+}
+.box2 ul li{
+	font-size: 14px;
+	float: left;
+	font-weight: bold;
+	padding: 30px 0 10px 35px;
+}
+.box2 p{
+	font-size: 13px;
+	width: 450px;
+	line-height: 25px;
+	text-indent: 2em;
+	padding: 0 10px;
+}
+.dip{
+	background: #FFFFFF;
+	margin-top: 20px;
+	margin-bottom: 50px;
+}
+
+/*校园新闻*/
+.center1{
+	background: #FFFFFF;
+	margin-top: 10px;
+	margin-bottom: 60px;
+	border: 1px solid #CACACA;
+}
+.lle{
+	text-align: center;
+}
+.cent1 ul{
+	height: 40px;
+	background: #EEEEEE;
+	margin: 10px 10px 0 10px;
+	width: 560px;
+	border-bottom: 1px solid #CACACA;
+}
+.cent1 ul:last-child{
+	margin-bottom: 30px;
+}
+.cent1 ul li{
+	padding-right: 10px;
+	line-height: 40px;
+}
+.cent1 ul img{
+	margin-left: 10px;
+	margin-top: 5px;
+	height: 30px;
+	border: 1px solid #cacaca;
+}
+.cent1 ul li:nth-of-type(1){
+	padding-left: 20px;
+}
+.cent1 ul li a{
+	color: #000000;
+	font-size: 15px;
+}
+
+/*社会评价*/
+.next1{
+	margin-top: 20px;
+	margin-bottom: 50px;
+	background: #FFFFFF;
+	font-size: 16px;
+	border: 1px solid #cacaca;
+}
+.fayan{
+	margin: 10px 0 25px 20px;
+}
+.text1 p{
+	float: left;
+	padding-left: 120px;
+	padding-bottom: 20px;
+}
+.text1 p input{
+	height: 25px;
+}
+.text2 p:nth-of-type(1) textarea{
+	width: 76%;
+}
+.text2 p:nth-of-type(1){
+	padding-left: 120px;
+	padding-bottom: 30px;
+	display: flex;
+	align-items: center;
+}
+.text2 p:nth-of-type(2){
+	margin-bottom: 20px;
+	margin-right: 590px;
+}
+.text2 p:nth-of-type(2) a{
+	background:#f5f5f5;
+	border-radius: 4px;
+	border: 1px solid #CACACA;
+	font-size: 18px;
+	color: #0078ff;
+	padding: 5px;
+}
+
+
+
+
+
+
+
+
+

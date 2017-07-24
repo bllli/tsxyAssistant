@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}大学生必备-唐小二{% endblock %}
+
+{% block content %}
+<div class="top">
+    <div class="wrapper clearfix">
+        <ul class="left">
+            <img class="left" src="{{ url_for("static", filename="img/a39-1.png") }}" alt="" height="90px"/>
+            <img class="left" src="{{ url_for("static", filename="img/016-1.png") }}" alt="" height="90px"/>
+        </ul>
+        <ul class="right">
+            <li class="active"><a href="index.html">首页</a></li>
+            <li><a href="ClassKnowledge.html">学习考研</a></li>
+            <li><a href="CampusNews.html">大学新闻</a></li>
+            <li><a href="SuperClub.html">超级社团</a></li>
+            <li><a href="Social.html">社会评价</a></li>
+            <li><a href="AboutUs.html">关于我们</a></li>
+            <li><a href="APP.html">联系我们</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+

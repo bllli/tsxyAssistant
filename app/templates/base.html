@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+    {% block head %}
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/base.css") }}"/>
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/style.css") }}"/>
+    <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    {% endblock %}
+</head>
+<body>
+{% block content %}
+
+{% endblock %}
+<!--banner-->
+<img src="{{ url_for("static", filename="img/004.jpg") }}" alt="" width="100%"/>
+
+<!--center-->
+<div class="wrapper">
+    <div id="demo">
+        <div id="indemo">
+            <div id="demo1" class="imgs">
+                <a class="left" href="#"><img src="{{ url_for("static", filename="img/005.png") }}" alt=""/><span>课堂知识</span></a>
+                <a class="left" href="#"><img src="{{ url_for("static", filename="img/007.png") }}" alt=""/><span>校园新闻</span></a>
+                <a class="left" href="#"><img src="{{ url_for("static", filename="img/015.png") }}" alt=""/><span>超级社团</span></a>
+                <a class="left" href="#"><img src="{{ url_for("static", filename="img/013.png") }}" alt=""/><span>社会评价</span></a>
+                <a class="left" href="#"><img src="{{ url_for("static", filename="img/014.png") }}" alt=""/><span>关于我们</span></a>
+                <a class="left" href="#"><img src="{{ url_for("static", filename="img/016.png") }}" alt=""/><span>APP下载</span></a>
+            </div>
+            <div id="demo2" class="imgs"></div>
+        </div>
+    </div>
+</div>
+
+<!--bottom-->
+<div class="foot">
+    <ul class="clearfix">
+        <li><a href="#"><img class="img-responsive" src="{{ url_for("static", filename="img/011.png") }}" alt=""/></a></li>
+        <li><a href="#"><img class="img-responsive" src="{{ url_for("static", filename="img/009.png") }}" alt=""/></a></li>
+        <li><a href="#"><img class="img-responsive" src="{{ url_for("static", filename="img/010.png") }}" alt=""/></a></li>
+        <li><a href="#"><img class="img-responsive" src="{{ url_for("static", filename="img/008.png") }}" alt=""/></a></li>
+    </ul>
+    <p>联系方式：13731780687&nbsp;&nbsp;&nbsp;QQ：1204050023&nbsp;&nbsp;&nbsp;微信：asf346</p>
+    <p>唐小二创始人：李登铭、张振、单若宁</p>
+    <p>IPC备案号：16018400</p>
+</div>
+
+{% block script %}
+<!--<script>
+    (function() {
+        var s = document.createElement("script");
+        s.onload = function() { bootlint.showLintReportForCurrentDocument([]); };
+        s.src = "js/bootlint.js";
+        document.body.appendChild(s)
+    })();
+</script>-->
+<script type="text/javascript" src="{{ url_for("static", filename="js/jquery-1.12.4.min.js") }}"></script>
+<script type="text/javascript" src="{{ url_for("static", filename="js/animate.js") }}"></script>
+<script type="text/javascript">
+    //小轮播
+    var speed = 10;
+    var tab = document.getElementById("demo");
+    var tab1 = document.getElementById("demo1");
+    var tab2 = document.getElementById("demo2");
+    tab2.innerHTML = tab1.innerHTML;
+
+    function Marquee() {
+        if (tab2.offsetWidth - tab.scrollLeft <= 0)
+            tab.scrollLeft -= tab1.offsetWidth
+        else {
+            tab.scrollLeft++;
+        }
+    }
+    var MyMar = setInterval(Marquee, speed);
+    tab.onmouseover = function () {
+        clearInterval(MyMar)
+    };
+    tab.onmouseout = function () {
+        MyMar = setInterval(Marquee, speed)
+    };
+</script>
+{% endblock %}
+</body>
+</html>
