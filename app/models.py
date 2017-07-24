@@ -201,6 +201,7 @@ class _Class(db.Model):
                               secondary=registrations,
                               backref=db.backref('classes', lazy='dynamic'),
                               lazy='dynamic')
+    """班级与课程的多对多关系定义"""
 
     def __repr__(self):
         return '<_Class %r>' % self.name
@@ -280,26 +281,36 @@ class Temp(db.Model):
         return Temp.get_temp(mark='school_structure', identify=None)
 
 
+class RawCourse(db.Model):
+    """原课程
+
+    抽象的课程概念。如不同年级、不同专业、不同教师所教授的“毛概”都是毛概课
+    """
+    __tablename__ = 'raw_courses'
+    id = db.Column(db.Integer, primary_key=True)  #: 原课程id
+    name = db.Column(db.String(128))  #: 课程名
+    nickname = db.Column(db.String(128))  #: 课程昵称 如“毛泽东思想与中国特色社会主义理论体系概论”昵称为“毛概”
+    course_code = db.Column(db.String(16))  #: 课程代号
+
+    worth = db.Column(db.String(2))  #: 学分
+
+    courses = db.relationship('Course', backref='raw_course', lazy='dynamic')
+
+
 class Course(db.Model):
     """课程
 
-    Args:
-        id (int): 课程编号.
-
-    :argument id:
+    具体的课程，包含上课时间地点周次、哪位老师负责、上课涉及班级等具体信息
     """
     __tablename__ = 'courses'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128))
-    course_code = db.Column(db.String(16))
+    id = db.Column(db.Integer, primary_key=True)  #: 课程id
+    when_code = db.Column(db.String(32))  #: 上课时间代号
+    week = db.Column(db.String(32))  #: 上课周次
+    parity = db.Column(db.String(32))  #: 单双周属性
+    which_room = db.Column(db.String(32))  #: 上课教室
+    where = db.Column(db.String(32))  #: 上课校区
 
-    when_code = db.Column(db.String(32))
-    worth = db.Column(db.String(2))
-    week = db.Column(db.String(32))
-    parity = db.Column(db.String(32))
-    which_room = db.Column(db.String(32))
-    where = db.Column(db.String(32))
-
+    raw_course_id = db.Column(db.Integer, db.ForeignKey('raw_courses.id'))
     teacher_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
@@ -307,22 +318,22 @@ class User(UserMixin, db.Model):
     """用户model"""
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    school_code = db.Column(db.String(16), unique=True, index=True)  # 学号
-    user_code = db.Column(db.String(16), unique=True, index=True)
-    username = db.Column(db.String(64), unique=True, index=True)
-    name = db.Column(db.String(64))
-    about_me = db.Column(db.Text())
+    school_code = db.Column(db.String(16), unique=True, index=True)  #: 学号
+    user_code = db.Column(db.String(16), unique=True, index=True)  #: 教务系统用户代号
+    username = db.Column(db.String(64), unique=True, index=True)  #: 用户名(自拟)
+    name = db.Column(db.String(64))  #: 姓名
+    about_me = db.Column(db.Text())  #: 个人简介
 
-    password_hash = db.Column(db.String(128))
-    confirmed = db.Column(db.Boolean, default=False)
+    password_hash = db.Column(db.String(128))  #: (加密过的)密码
+    confirmed = db.Column(db.Boolean, default=False)  #: 通过确认
 
-    member_since = db.Column(db.DateTime(), default=datetime.utcnow)
-    last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
+    member_since = db.Column(db.DateTime(), default=datetime.utcnow)  #: 账号注册时间
+    last_seen = db.Column(db.DateTime(), default=datetime.utcnow)  #: 最后登录时间
 
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    class_id = db.Column(db.Integer, db.ForeignKey('classes.id'))
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))  #: 所属角色
+    class_id = db.Column(db.Integer, db.ForeignKey('classes.id'))  #: 所属班级
 
-    courses = db.relationship('Course', backref='teacher', lazy='dynamic')
+    courses = db.relationship('Course', backref='teacher', lazy='dynamic')  #: 教师负责的课程
 
     @staticmethod
     def generate_fake(count=100):

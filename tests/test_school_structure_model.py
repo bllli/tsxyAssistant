@@ -1,6 +1,7 @@
+# coding=utf-8
 import unittest
 from app import create_app, db
-from app.models import School, Department, Specialty, _Class, User, Role, Course
+from app.models import School, Department, Specialty, _Class, User, Role, Course, RawCourse
 
 
 class SchoolStructureModelTestCase(unittest.TestCase):
@@ -57,16 +58,28 @@ class SchoolStructureModelTestCase(unittest.TestCase):
         self.assertTrue(u in c.students)
 
     def test_course_with_class(self):
-        course = Course(name='Java')
+        # + 原课程
+        raw_course = RawCourse(name=u'Java')
+        db.session.add(raw_course)
+        db.session.commit()
+        # + 从原课程指定实际课程
+        course = Course()
+        # course.raw_course_id = raw_course.id
+        course.raw_course = raw_course
         db.session.add(course)
         db.session.commit()
-        c = _Class(name='14CS1')
-        c2 = _Class(name='14CS2')
+        # + 两个班级
+        c = _Class(name=u'14计本1')
+        c2 = _Class(name=u'14计本2')
+        # 将班级与课程关联起来
         c.courses.append(course)
-        c2.courses.append(course)
+        # c2.courses.append(course)
+        course.classes.append(c2)
         db.session.add(c)
         db.session.add(c2)
         db.session.commit()
+
+        # 判断
         self.assertTrue(course in c.courses.all())
         self.assertTrue(c in course.classes.all())
         self.assertTrue(course in c2.courses.all())

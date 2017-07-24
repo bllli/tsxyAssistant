@@ -81,12 +81,12 @@ class UserModelTestCase(unittest.TestCase):
 
     def test_roles_and_permissions(self):
         u = User(username='john', password='cat')
-        self.assertTrue(u.can(Permission.WRITE_ARTICLES))
-        self.assertFalse(u.can(Permission.MODERATE_COMMENTS))
+        self.assertTrue(u.can(Permission.VIEW_SCORE))
+        self.assertFalse(u.can(Permission.VIEW_ALL_SCORE))
 
     def test_anonymous_user(self):
         u = AnonymousUser()
-        self.assertFalse(u.can(Permission.FOLLOW))
+        self.assertFalse(u.can(Permission.VIEW_SCORE))
 
     def test_timestamps(self):
         u = User(password='cat')
@@ -111,6 +111,6 @@ class UserModelTestCase(unittest.TestCase):
         db.session.add(u)
         db.session.commit()
         json_user = u.to_json()
-        expected_keys = ['url', 'username', 'member_since', 'last_seen']
+        expected_keys = ['id', 'school_code', 'url', 'username', 'member_since', 'last_seen', 'role']
         self.assertEqual(sorted(json_user.keys()), sorted(expected_keys))
         self.assertTrue('api/v1.0/users/' in json_user['url'])
