@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}{% endblock %} | 唐小二</title>
     {% block head %}
     <link rel="stylesheet" href="{{ url_for("static", filename="css/base.css") }}"/>
     <link rel="stylesheet" href="{{ url_for("static", filename="css/style.css") }}"/>
@@ -15,28 +15,25 @@
     {% endblock %}
 </head>
 <body>
-{% block content %}
-
-{% endblock %}
-<!--banner-->
-<img src="{{ url_for("static", filename="img/004.jpg") }}" alt="" width="100%"/>
-
-<!--center-->
-<div class="wrapper">
-    <div id="demo">
-        <div id="indemo">
-            <div id="demo1" class="imgs">
-                <a class="left" href="#"><img src="{{ url_for("static", filename="img/005.png") }}" alt=""/><span>课堂知识</span></a>
-                <a class="left" href="#"><img src="{{ url_for("static", filename="img/007.png") }}" alt=""/><span>校园新闻</span></a>
-                <a class="left" href="#"><img src="{{ url_for("static", filename="img/015.png") }}" alt=""/><span>超级社团</span></a>
-                <a class="left" href="#"><img src="{{ url_for("static", filename="img/013.png") }}" alt=""/><span>社会评价</span></a>
-                <a class="left" href="#"><img src="{{ url_for("static", filename="img/014.png") }}" alt=""/><span>关于我们</span></a>
-                <a class="left" href="#"><img src="{{ url_for("static", filename="img/016.png") }}" alt=""/><span>APP下载</span></a>
-            </div>
-            <div id="demo2" class="imgs"></div>
-        </div>
+<div class="top">
+    <div class="wrapper clearfix">
+        <ul class="left">
+            <img class="left" src="{{ url_for("static", filename="img/a39-1.png") }}" alt="" height="90px"/>
+            <img class="left" src="{{ url_for("static", filename="img/016-1.png") }}" alt="" height="90px"/>
+        </ul>
+        <ul class="right">
+            <li class="active"><a href="index.html">首页</a></li>
+            <li><a href="ClassKnowledge.html">学习考研</a></li>
+            <li><a href="CampusNews.html">大学新闻</a></li>
+            <li><a href="SuperClub.html">超级社团</a></li>
+            <li><a href="Social.html">社会评价</a></li>
+            <li><a href="AboutUs.html">关于我们</a></li>
+            <li><a href="APP.html">联系我们</a></li>
+        </ul>
     </div>
 </div>
+
+{% block content %}{% endblock %}
 
 <!--bottom-->
 <div class="foot">
@@ -62,29 +59,6 @@
 </script>-->
 <script type="text/javascript" src="{{ url_for("static", filename="js/jquery-1.12.4.min.js") }}"></script>
 <script type="text/javascript" src="{{ url_for("static", filename="js/animate.js") }}"></script>
-<script type="text/javascript">
-    //小轮播
-    var speed = 10;
-    var tab = document.getElementById("demo");
-    var tab1 = document.getElementById("demo1");
-    var tab2 = document.getElementById("demo2");
-    tab2.innerHTML = tab1.innerHTML;
-
-    function Marquee() {
-        if (tab2.offsetWidth - tab.scrollLeft <= 0)
-            tab.scrollLeft -= tab1.offsetWidth
-        else {
-            tab.scrollLeft++;
-        }
-    }
-    var MyMar = setInterval(Marquee, speed);
-    tab.onmouseover = function () {
-        clearInterval(MyMar)
-    };
-    tab.onmouseout = function () {
-        MyMar = setInterval(Marquee, speed)
-    };
-</script>
 {% endblock %}
 </body>
 </html>
