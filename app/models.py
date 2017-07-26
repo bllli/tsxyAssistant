@@ -431,6 +431,7 @@ class User(UserMixin, db.Model):
 
         :return: 用户信息json
         """
+        role = self.role
         json_user = {
             'id': self.id,
             'url': url_for('api.get_user', id=self.id, _external=True),
@@ -438,7 +439,8 @@ class User(UserMixin, db.Model):
             'username': self.username,
             'member_since': localtime(self.member_since),
             'last_seen': localtime(self.last_seen),
-            'role': Role.query.filter_by()
+            'role': role.name,
+            'permissions': role.permissions,
         }
         return json_user
 
