@@ -27,6 +27,47 @@
 	line-height: 80px;
 	font-size: 16px;
 }
+/*下载*/
+.banner2{
+	position: relative;
+}
+.cent2{
+	position: absolute;
+	left: 35%;
+	top: 35%;
+}
+.cent2 img{
+	width: 120px;
+}
+.cent2 ul li a{
+	display: flex;
+	align-items: center;
+	padding: 5px 10px;
+	border: 1px solid #CACACA;
+	border-radius: 15px;
+	background: #CACACA;
+	font-size: 21px;
+	color: #000000;
+}
+.cent2 ul li a:hover{
+	background: #1B1B1B;
+	color: #FFFFFF;
+	border: 1px solid #1B1B1B;
+	border-radius: 15px;
+}
+.cent2 ul li{
+	margin: 0px 40px;
+}
+.cent2 ul li:nth-of-type(2){
+	margin-top: 25px;
+}
+.cent2 ul li a img{
+	padding: 0 10px;
+	width: 35px;
+}
+
+
+
 
 
 /*关于我们*/
@@ -165,8 +206,73 @@
 }
 
 
-
-
+/*登录页*/
+.ther{
+	position: relative;
+}
+.ther2{
+	border-top: 3px solid #0078FF;
+	position: absolute;
+	left: 20%;
+	top: 10%;
+	background: #f2f0f0;
+}
+.ther2 h3{
+	margin-top:15px;
+	margin-bottom: 60px;
+	text-align: center;
+	font-size: 24px;
+}
+.ther2 p{
+	font-size: 16px;
+	margin: 30px 50px;
+}
+.ther2 p input{
+	width: 220px;
+	height: 25px;
+}
+.ther2 ul {
+	margin: 0 50px;
+}
+.ther2 ul li:nth-of-type(3){
+	margin-right: 15px;
+}
+.ther2 ul li{
+	display: flex;
+	align-items: center;
+}
+.ther2 ul li input{
+	width: 15px;
+	height: 15px;
+}
+.ther2 ul li a{
+	color: #000000;
+}
+.ther2 span{
+	display: flex;
+	justify-content: center;
+}
+.ther2 span a{
+	margin: 60px 0;
+	background: #3db1ea;
+	color: #FFFFFF;
+	padding: 6px 122px;
+	font-size: 18px;
+}
+.ther3{
+	margin-top: 30px;
+	margin-bottom: 10px;
+}
+.ther3 a img{
+	margin-left: 10px;
+	width: 30px;
+}
+.ther3 a:last-child{
+	line-height: 30px;
+}
+.ther3 a:nth-of-type(1) img{
+	margin-right: 40px;
+}
 
 
 
