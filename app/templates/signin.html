@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}登录{% endblock %}
+
+{% block content %}
+<!--banner-->
+		<div class="ther">
+			<img src="{{ url_for("static", filename="img/037.jpg") }}" alt="" width="100%" />
+			<div class="ther2">
+				<h3>登录</h3>
+				<p>账号：<input type="text" value=""/></p>
+				<p>密码：<input type="text" value=""/></p>
+				<ul class="clearfix">
+					<li class="left"><input type="checkbox" name="sex" value="" /><span>下次自动登录</span></li>				
+					<li class="right"><a href="#">注册账号</a></li>
+					<li class="right"><a href="#">忘记密码</a></li>
+				</ul>
+				<span><a href="#">登录</a></span>
+				<div class="clearfix ther3">
+					<a class="right" href="#"><img src="{{ url_for("static", filename="img/034.png") }}" alt="" /></a>
+					<a class="right" href="#"><img src="{{ url_for("static", filename="img/035.png") }}" alt="" /></a>
+					<a class="right" href="#"><img src="{{ url_for("static", filename="img/032.png") }}" alt="" /></a>
+					<a class="right" href="#"><img src="{{ url_for("static", filename="img/033.png") }}" alt="" /></a>
+					<a class="right">其他登录</a>
+				</div>
+			</div>
+		</div>
+	
+		<!--center-->
+		<div class="wrapper">
+			<div id="demo">
+				<div id="indemo">
+					<div id="demo1" class="imgs">
+						<a class="left" href="#"><img  src="{{ url_for("static", filename="img/A32.png") }}" alt="" /><span>签到</span></a>
+						<a class="left" href="#"><img  src="{{ url_for("static", filename="img/a33.png") }}" alt="" /><span>笔记</span></a>
+						<a class="left" href="#"><img  src="{{ url_for("static", filename="img/a37.png") }}" alt="" /><span>资料</span></a>
+						<a class="left" href="#"><img  src="{{ url_for("static", filename="img/a38.png") }}" alt="" /><span>作业</span></a>
+						<a class="left" href="#"><img  src="{{ url_for("static", filename="img/a36.png") }}" alt="" /><span>成绩</span></a>
+						<a class="left" href="#"><img  src="{{ url_for("static", filename="img/a34.png") }}" alt="" /><span>上课记录</span></a>
+					</div>
+					<div id="demo2" class="imgs"></div>
+				</div>
+			</div>
+		</div>
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<script type="text/javascript">
+    //小轮播
+    var speed = 10;
+    var tab = document.getElementById("demo");
+    var tab1 = document.getElementById("demo1");
+    var tab2 = document.getElementById("demo2");
+    tab2.innerHTML = tab1.innerHTML;
+
+    function Marquee() {
+        if (tab2.offsetWidth - tab.scrollLeft <= 0)
+            tab.scrollLeft -= tab1.offsetWidth
+        else {
+            tab.scrollLeft++;
+        }
+    }
+    var MyMar = setInterval(Marquee, speed);
+    tab.onmouseover = function () {
+        clearInterval(MyMar)
+    };
+    tab.onmouseout = function () {
+        MyMar = setInterval(Marquee, speed)
+    };
+</script>
+{% endblock %}
+
