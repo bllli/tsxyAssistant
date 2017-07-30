@@ -1,0 +1,660 @@
+{
+  "department": "计算机科学与技术系",
+  "major": "14计本1",
+  "score_tables": [
+    {
+      "scores": [
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "1",
+          "name": "大学英语A（一）",
+          "ps": "",
+          "quale": "初修",
+          "score": "70.0",
+          "type": "公共课/必修课",
+          "worth": "4.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "2",
+          "name": "高等数学ⅠA(一)",
+          "ps": "",
+          "quale": "初修",
+          "score": "82.0",
+          "type": "公共课/必修课",
+          "worth": "6.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "3",
+          "name": "线性代数A",
+          "ps": "",
+          "quale": "初修",
+          "score": "74.0",
+          "type": "专业基础课/必修课",
+          "worth": "3.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "4",
+          "name": "思想道德修养与法律基础A",
+          "ps": "",
+          "quale": "初修",
+          "score": "80.0",
+          "type": "公共课/必修课",
+          "worth": "3.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "5",
+          "name": "形势与政策A（一）",
+          "ps": "",
+          "quale": "初修",
+          "score": "合格",
+          "type": "公共课/必修课",
+          "worth": "1.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "6",
+          "name": "军事理论课A",
+          "ps": "",
+          "quale": "初修",
+          "score": "合格",
+          "type": "公共课/必修课",
+          "worth": "2.0"
+        },
+        {
+          "exam_method": "",
+          "get_method": "初修取得",
+          "id": "7",
+          "name": "军训A",
+          "ps": "",
+          "quale": "初修",
+          "score": "合格",
+          "type": "军训",
+          "worth": "2.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "8",
+          "name": "体育A（一）",
+          "ps": "",
+          "quale": "初修",
+          "score": "72.0",
+          "type": "公共课/必修课",
+          "worth": "1.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "9",
+          "name": "计算机导论A",
+          "ps": "",
+          "quale": "初修",
+          "score": "81.0",
+          "type": "专业基础课/必修课",
+          "worth": "1.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "10",
+          "name": "程序设计基础A",
+          "ps": "",
+          "quale": "初修",
+          "score": "83.0",
+          "type": "专业基础课/必修课",
+          "worth": "3.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "11",
+          "name": "程序设计基础实验A",
+          "ps": "",
+          "quale": "初修",
+          "score": "96.0",
+          "type": "专业基础课/必修课",
+          "worth": "1.0"
+        }
+      ],
+      "semester": "2014-2015学年第一学期"
+    },
+    {
+      "scores": [
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "1",
+          "name": "大学英语A（二）",
+          "ps": "",
+          "quale": "初修",
+          "score": "66.0",
+          "type": "公共课/必修课",
+          "worth": "4.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "2",
+          "name": "高等数学ⅠA(二)",
+          "ps": "",
+          "quale": "初修",
+          "score": "67.0",
+          "type": "公共课/必修课",
+          "worth": "4.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "3",
+          "name": "大学物理ⅠA（一）",
+          "ps": "",
+          "quale": "初修",
+          "score": "61.0",
+          "type": "公共课/必修课",
+          "worth": "3.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "4",
+          "name": "马克思主义基本原理概论A",
+          "ps": "",
+          "quale": "初修",
+          "score": "78.0",
+          "type": "公共课/必修课",
+          "worth": "3.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "5",
+          "name": "形势与政策A（二）",
+          "ps": "",
+          "quale": "初修",
+          "score": "合格",
+          "type": "公共课/必修课",
+          "worth": "1.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "6",
+          "name": "体育A（二）",
+          "ps": "",
+          "quale": "初修",
+          "score": "75.0",
+          "type": "公共课/必修课",
+          "worth": "1.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "7",
+          "name": "大学生职业发展与就业指导A（一）",
+          "ps": "",
+          "quale": "初修",
+          "score": "合格",
+          "type": "公共课/必修课",
+          "worth": "1.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "8",
+          "name": "离散数学A",
+          "ps": "",
+          "quale": "初修",
+          "score": "83.0",
+          "type": "专业基础课/必修课",
+          "worth": "3.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "9",
+          "name": "C++程序设计A",
+          "ps": "",
+          "quale": "初修",
+          "score": "91.0",
+          "type": "专业课/必修课",
+          "worth": "3.0"
+        },
+        {
+          "exam_method": "",
+          "get_method": "初修取得",
+          "id": "10",
+          "name": "计算机认识实习A",
+          "ps": "",
+          "quale": "初修",
+          "score": "79.0",
+          "type": "实习",
+          "worth": "1.0"
+        },
+        {
+          "exam_method": "",
+          "get_method": "初修取得",
+          "id": "11",
+          "name": "计算机绘图实训A",
+          "ps": "",
+          "quale": "初修",
+          "score": "88.0",
+          "type": "课程设计",
+          "worth": "1.0"
+        },
+        {
+          "exam_method": "",
+          "get_method": "初修取得",
+          "id": "12",
+          "name": "音乐鉴赏（网选）",
+          "ps": "",
+          "quale": "初修",
+          "score": "合格",
+          "type": "",
+          "worth": "1.0"
+        },
+        {
+          "exam_method": "",
+          "get_method": "初修取得",
+          "id": "13",
+          "name": "中华诗词之美（网选）",
+          "ps": "",
+          "quale": "初修",
+          "score": "合格",
+          "type": "",
+          "worth": "1.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "14",
+          "name": "大学物理实验ⅠA（一）",
+          "ps": "",
+          "quale": "初修",
+          "score": "82.0",
+          "type": "公共课/必修课",
+          "worth": "0.5"
+        }
+      ],
+      "semester": "2014-2015学年第二学期"
+    },
+    {
+      "scores": [
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "1",
+          "name": "大学英语A（三）",
+          "ps": "",
+          "quale": "初修",
+          "score": "62.0",
+          "type": "公共课/必修课",
+          "worth": "4.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "2",
+          "name": "大学物理ⅠA（二）",
+          "ps": "",
+          "quale": "初修",
+          "score": "46.0",
+          "type": "公共课/必修课",
+          "worth": "3.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "补考取得",
+          "id": "3",
+          "name": "大学物理ⅠA（二）",
+          "ps": "",
+          "quale": "初修",
+          "score": "11.0",
+          "type": "公共课/必修课",
+          "worth": "3.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "重修取得",
+          "id": "4",
+          "name": "大学物理ⅠA（二）",
+          "ps": "",
+          "quale": "重修",
+          "score": "60.0",
+          "type": "公共课/必修课",
+          "worth": "3.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "5",
+          "name": "中国近现代史纲要A",
+          "ps": "",
+          "quale": "初修",
+          "score": "55.0",
+          "type": "公共课/必修课",
+          "worth": "2.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "补考取得",
+          "id": "6",
+          "name": "中国近现代史纲要A",
+          "ps": "",
+          "quale": "初修",
+          "score": "62.0",
+          "type": "公共课/必修课",
+          "worth": "2.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "7",
+          "name": "电路与模拟电子A",
+          "ps": "",
+          "quale": "初修",
+          "score": "69.0",
+          "type": "专业基础课/必修课",
+          "worth": "4.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "8",
+          "name": "概率统计A",
+          "ps": "",
+          "quale": "初修",
+          "score": "66.0",
+          "type": "专业基础课/必修课",
+          "worth": "3.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "9",
+          "name": "数据结构A",
+          "ps": "",
+          "quale": "初修",
+          "score": "87.0",
+          "type": "专业基础课/必修课",
+          "worth": "4.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "10",
+          "name": "Java程序设计A",
+          "ps": "",
+          "quale": "初修",
+          "score": "81.0",
+          "type": "专业课/必修课",
+          "worth": "3.0"
+        },
+        {
+          "exam_method": "",
+          "get_method": "初修取得",
+          "id": "11",
+          "name": "数据结构课程设计A",
+          "ps": "",
+          "quale": "初修",
+          "score": "85.0",
+          "type": "课程设计",
+          "worth": "1.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "12",
+          "name": "体育A（三）",
+          "ps": "",
+          "quale": "初修",
+          "score": "72.5",
+          "type": "公共课/必修课",
+          "worth": "1.0"
+        },
+        {
+          "exam_method": "",
+          "get_method": "初修取得",
+          "id": "13",
+          "name": "食品安全与日常饮食（网选）",
+          "ps": "",
+          "quale": "初修",
+          "score": "合格",
+          "type": "",
+          "worth": "1.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "14",
+          "name": "大学物理实验ⅠA（二）",
+          "ps": "",
+          "quale": "初修",
+          "score": "91.0",
+          "type": "公共课/必修课",
+          "worth": "0.5"
+        },
+        {
+          "exam_method": "",
+          "get_method": "初修取得",
+          "id": "15",
+          "name": "情感哲学与情感教育（网选）",
+          "ps": "",
+          "quale": "初修",
+          "score": "合格",
+          "type": "",
+          "worth": "1.0"
+        }
+      ],
+      "semester": "2015-2016学年第一学期"
+    },
+    {
+      "scores": [
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "1",
+          "name": "大学英语A（四）",
+          "ps": "",
+          "quale": "初修",
+          "score": "61.0",
+          "type": "公共课/必修课",
+          "worth": "4.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "2",
+          "name": "毛泽东思想和中国特色社会主义理论体系概论A",
+          "ps": "",
+          "quale": "初修",
+          "score": "71.0",
+          "type": "公共课/必修课",
+          "worth": "6.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "3",
+          "name": "汇编语言与接口技术A",
+          "ps": "",
+          "quale": "初修",
+          "score": "83.0",
+          "type": "专业课/必修课",
+          "worth": "4.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "4",
+          "name": "数字电路与逻辑设计A",
+          "ps": "",
+          "quale": "初修",
+          "score": "77.7",
+          "type": "专业基础课/必修课",
+          "worth": "4.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "5",
+          "name": "计算机组成与体系结构A",
+          "ps": "",
+          "quale": "初修",
+          "score": "65.0",
+          "type": "专业基础课/必修课",
+          "worth": "5.0"
+        },
+        {
+          "exam_method": "",
+          "get_method": "初修取得",
+          "id": "6",
+          "name": "创业管理实战（网选）",
+          "ps": "",
+          "quale": "初修",
+          "score": "合格",
+          "type": "",
+          "worth": "1.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "7",
+          "name": "体育A（四）",
+          "ps": "",
+          "quale": "初修",
+          "score": "74.0",
+          "type": "公共课/必修课",
+          "worth": "1.0"
+        },
+        {
+          "exam_method": "",
+          "get_method": "初修取得",
+          "id": "8",
+          "name": "电子实训A",
+          "ps": "",
+          "quale": "初修",
+          "score": "95.0",
+          "type": "实训",
+          "worth": "1.0"
+        },
+        {
+          "exam_method": "",
+          "get_method": "初修取得",
+          "id": "9",
+          "name": "人人爱设计（网选）",
+          "ps": "",
+          "quale": "初修",
+          "score": "合格",
+          "type": "",
+          "worth": "1.0"
+        }
+      ],
+      "semester": "2015-2016学年第二学期"
+    },
+    {
+      "scores": [
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "1",
+          "name": "大学生职业发展与就业指导A（二）",
+          "ps": "",
+          "quale": "初修",
+          "score": "合格",
+          "type": "公共课/必修课",
+          "worth": "1.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "2",
+          "name": "计算机专业英语A",
+          "ps": "",
+          "quale": "初修",
+          "score": "73.0",
+          "type": "专业课/必修课",
+          "worth": "2.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "3",
+          "name": "linux系统管理A",
+          "ps": "",
+          "quale": "初修",
+          "score": "71.8",
+          "type": "专业课/必修课",
+          "worth": "3.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "4",
+          "name": "操作系统A",
+          "ps": "",
+          "quale": "初修",
+          "score": "70.0",
+          "type": "专业课/必修课",
+          "worth": "4.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "5",
+          "name": "数据库原理与应用A",
+          "ps": "",
+          "quale": "初修",
+          "score": "90.0",
+          "type": "专业课/必修课",
+          "worth": "4.0"
+        },
+        {
+          "exam_method": "考试",
+          "get_method": "初修取得",
+          "id": "6",
+          "name": "软件工程A",
+          "ps": "",
+          "quale": "初修",
+          "score": "71.0",
+          "type": "专业课/必修课",
+          "worth": "3.0"
+        },
+        {
+          "exam_method": "",
+          "get_method": "初修取得",
+          "id": "7",
+          "name": "数据库原理与应用课程设计A",
+          "ps": "",
+          "quale": "初修",
+          "score": "80.0",
+          "type": "课程设计",
+          "worth": "1.0"
+        },
+        {
+          "exam_method": "考查",
+          "get_method": "初修取得",
+          "id": "8",
+          "name": "单片机原理及应用A",
+          "ps": "",
+          "quale": "初修",
+          "score": "77.0",
+          "type": "专业课/必修课",
+          "worth": "3.5"
+        }
+      ],
+      "semester": "2016-2017学年第一学期"
+    }
+  ],
+  "stu_id": "0000000000",
+  "user_code": "201400000000"
+}
