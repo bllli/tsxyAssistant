@@ -56,3 +56,11 @@ venv
 将删除 doc/modules.rst
 将删除 doc/tests.rst
 将删除 migrations/
+
+# bak
+*.bak
+
+# docs
+doc/_build/
+
+cookies
