@@ -61,6 +61,6 @@ venv
 *.bak
 
 # docs
-doc/_build/
+doc/build/
 
 cookies
