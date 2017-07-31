@@ -27,7 +27,8 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager, Shell
 
 from app import create_app, db
-from app.models import User, Role, Permission, School
+from app.models import User, Role, Permission, School, Department, Specialty, \
+    _Class, Temp, RawCourse, Course
 
 COV = None
 if os.environ.get('FLASK_COVERAGE'):
@@ -49,8 +50,9 @@ migrate = Migrate(app, db)
 
 def make_shell_context():
     """为Flask-Script的shell功能导入model类"""
-    return dict(app=app, db=db, User=User, Role=Role,
-                Permission=Permission, School=School)
+    return dict(app=app, db=db, User=User, Role=Role, Temp=Temp,
+                Permission=Permission, School=School, Department=Department,
+                Specialty=Specialty, _Class=_Class, RawCourse=RawCourse, Course=Course)
 
 
 manager.add_command("shell", Shell(make_context=make_shell_context))

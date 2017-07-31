@@ -63,7 +63,7 @@ class SchoolStructureModelTestCase(unittest.TestCase):
         db.session.add(raw_course)
         db.session.commit()
         # + 从原课程指定实际课程
-        course = Course()
+        course = Course(User(name=u"老师"), RawCourse(name=u"没课"))
         # course.raw_course_id = raw_course.id
         course.raw_course = raw_course
         db.session.add(course)
@@ -80,12 +80,12 @@ class SchoolStructureModelTestCase(unittest.TestCase):
         db.session.commit()
 
         # 判断
-        self.assertTrue(course in c.courses.all())
-        self.assertTrue(c in course.classes.all())
-        self.assertTrue(course in c2.courses.all())
-        self.assertTrue(c2 in course.classes.all())
+        self.assertTrue(course in c.courses)
+        self.assertTrue(c in course.classes)
+        self.assertTrue(course in c2.courses)
+        self.assertTrue(c2 in course.classes)
         course.classes.remove(c)
         db.session.add(course)
         db.session.commit()
-        self.assertFalse(course in c.courses.all())
-        self.assertFalse(c in course.classes.all())
+        self.assertFalse(course in c.courses)
+        self.assertFalse(c in course.classes)

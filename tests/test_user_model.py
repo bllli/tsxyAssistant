@@ -111,6 +111,6 @@ class UserModelTestCase(unittest.TestCase):
         db.session.add(u)
         db.session.commit()
         json_user = u.to_json()
-        expected_keys = ['id', 'school_code', 'url', 'username', 'member_since', 'last_seen', 'role']
+        expected_keys = ['id', 'school_code', 'url', 'username', 'member_since', 'last_seen', 'role', 'permissions']
         self.assertEqual(sorted(json_user.keys()), sorted(expected_keys))
         self.assertTrue('api/v1.0/users/' in json_user['url'])

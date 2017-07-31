@@ -22,6 +22,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from . import db, login_manager
 
 
+class Operation:
+    ADD = 0x01
+    REMOVE = 0x02
+
+
 class Permission:
     """权限类 用于规定权限的二进制数值"""
     VIEW_SCHEDULE = 0x01  #: 查看课程表
@@ -81,10 +86,12 @@ class Role(db.Model):
 
     @staticmethod
     def to_json():
+        """角色json"""
         return {
-            'Student': Permission.student,
-            'Teacher': Permission.teacher,
-            'Administrator': Permission.administrator,
+            'roles': [{
+                'name': role.name,
+                'permissions': role.permissions
+            } for role in Role.query.all()]
         }
 
 
@@ -181,10 +188,10 @@ class Specialty(db.Model):
         return '<Specialty %r>' % self.name
 
 
-registrations = db.Table('registrations',
-                         db.Column('course_id', db.Integer, db.ForeignKey('courses.id')),
-                         db.Column('class_id', db.Integer, db.ForeignKey('classes.id'))
-                         )
+enrollments = db.Table('enrollments',
+                       db.Column('course_id', db.Integer, db.ForeignKey('courses.id')),
+                       db.Column('class_id', db.Integer, db.ForeignKey('classes.id'))
+                       )
 
 
 class _Class(db.Model):
@@ -198,7 +205,7 @@ class _Class(db.Model):
     students = db.relationship('User', backref='_class', lazy='dynamic')
 
     courses = db.relationship('Course',
-                              secondary=registrations,
+                              secondary=enrollments,
                               backref=db.backref('classes', lazy='dynamic'),
                               lazy='dynamic')
     """班级与课程的多对多关系定义"""
@@ -297,6 +304,12 @@ class RawCourse(db.Model):
     courses = db.relationship('Course', backref='raw_course', lazy='dynamic')
 
 
+substitutes = db.Table('substitutes',
+                       db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+                       db.Column('course_id', db.Integer, db.ForeignKey('courses.id')),
+                       )
+
+
 class Course(db.Model):
     """课程
 
@@ -312,6 +325,55 @@ class Course(db.Model):
 
     raw_course_id = db.Column(db.Integer, db.ForeignKey('raw_courses.id'))
     teacher_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    substitute_teachers = db.relationship('User',
+                                          secondary=substitutes,
+                                          backref=db.backref('guest_courses', lazy='dynamic'),
+                                          lazy='dynamic')
+
+    def __init__(self, teacher, raw_course, **kwargs):
+        super(Course, self).__init__(**kwargs)
+        self.teacher = teacher
+        self.raw_course = raw_course
+
+    def to_json(self):
+        course_json = {
+            'id': self.id,
+            'when_code': self.when_code,
+            'week': self.week,
+            'parity': self.parity,
+            'which_room': self.which_room,
+            'where': self.where,
+        }
+        return course_json
+
+    def operate_classes(self, operation, _classes):
+        # type: (int, list) -> None
+        """为课程添加/删除上课班级
+
+        :param operation: 执行的操作 应为Operation类中的类变量
+        :param list _classes: _Class 班级对象 列表
+        """
+        for each in _classes:
+            if operation is Operation.ADD:  # 向课程中新增班级
+                self.classes.append(each)
+            elif operation is Operation.REMOVE:  # 从课程中删除班级
+                self.classes.remove(each)
+        db.session.add(self)
+        db.session.commit()
+
+    def appoint_substitute_teacher(self, operation, users):
+        # type: (int, list) -> None
+        """指定代课教师
+
+        课程负责教师、代本课的教师、教务处管理教师 能指定代课教师
+        """
+        for each in users:
+            if operation is Operation.ADD:
+                self.substitute_teachers.append(each)
+            elif operation is Operation.REMOVE:
+                self.substitute_teachers.remove(each)
+        db.session.add(self)
+        db.session.commit()
 
 
 class User(UserMixin, db.Model):
@@ -417,17 +479,6 @@ class User(UserMixin, db.Model):
 
     def to_json(self):
         """将本对象转换为json
-
-        ============ ============= ==== ====
-        字段名       字段说明      类型 备注
-        ============ ============= ==== ====
-        id           用户id        int
-        username     用户昵称       str  允许为空
-        url          用户信息url    str
-        school_code  学号          str  10位数字
-        member_since 注册时间       str
-        last_seen    上次访问时间    str
-        ============ ============= ==== ====
 
         :return: 用户信息json
         """
