@@ -8,7 +8,6 @@
 # 目前已确定要实现的功能
 每个功能单独拎出来都可以做个项目了_(:3」∠)_
 ### 签到功能
-[E-R图(需科学上网)](https://docs.google.com/drawings/d/1LRwgmYPzFbYqAIWy7lIKhAGfrTeFJIbt_TwR2yCo5DY/edit?usp=sharing)
 ### 课程表
 1. 抓取教务系统课程表: [tsxypy](https://github.com/bllli/tsxypy)
 2. 服务器后台获取课表, 提供课程表接口 (本项目) 
