@@ -19,6 +19,7 @@ from flask_login import UserMixin, AnonymousUserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from app.exceptions import ValidationError
 from . import db, login_manager
 
 
@@ -33,12 +34,12 @@ class Permission:
     VIEW_SCORE = 0x02  #: 查看成绩
     VIEW_ALL_SCHEDULE = 0x04  #: 查看所有人的课程表
     VIEW_ALL_SCORE = 0x08  #: 查看所有人的成绩
-    # MODIFY = 0x0f  #: 修改?
+    MODIFY = 0x0f  #: 编辑权限
     ADMINISTER = 0x80  #: 管理员权限
 
     student = VIEW_SCHEDULE | VIEW_SCORE
     teacher = VIEW_ALL_SCHEDULE | VIEW_ALL_SCORE
-    teacher_v = VIEW_ALL_SCHEDULE | VIEW_ALL_SCORE
+    teacher_v = VIEW_ALL_SCHEDULE | VIEW_ALL_SCORE | MODIFY
     administrator = 0xff
 
     @staticmethod
@@ -70,6 +71,7 @@ class Role(db.Model):
         roles = {
             'Student': (Permission.student, True),
             'Teacher': (Permission.teacher, False),
+            'Teacher_V': (Permission.teacher_v, False),
             'Administrator': (Permission.administrator, False),
         }
         for r in roles:
@@ -303,6 +305,27 @@ class RawCourse(db.Model):
 
     courses = db.relationship('Course', backref='raw_course', lazy='dynamic')
 
+    def to_json(self):
+        raw_course_json = {
+            'id': self.id,
+            'name': self.name,
+            'nickname': self.nickname,
+            'course_code': self.course_code,
+            'worth': self.worth,
+            'url': url_for('api.get_raw_courses_by_id', id=self.id, _external=True),
+        }
+        return raw_course_json
+
+    @staticmethod
+    def from_json(json_post):
+        name = json_post.get('name')
+        nickname = json_post.get('nickname')
+        course_code = json_post.get('course_code')
+        worth = json_post.get('worth')
+        if name is None or name == '' or course_code is None or course_code == '':
+            raise ValidationError('Must have name and course_code')
+        return RawCourse(name=name, nickname=nickname, course_code=course_code, worth=worth)
+
 
 substitutes = db.Table('substitutes',
                        db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
@@ -319,6 +342,7 @@ class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)  #: 课程id
     when_code = db.Column(db.String(32))  #: 上课时间代号
     week = db.Column(db.String(32))  #: 上课周次
+    week_raw = db.Column(db.String(32))  #: 未解析的上课周次
     parity = db.Column(db.String(32))  #: 单双周属性
     which_room = db.Column(db.String(32))  #: 上课教室
     where = db.Column(db.String(32))  #: 上课校区
@@ -340,11 +364,37 @@ class Course(db.Model):
             'id': self.id,
             'when_code': self.when_code,
             'week': self.week,
+            'week_raw': self.week_raw,
             'parity': self.parity,
             'which_room': self.which_room,
             'where': self.where,
+            'raw_course_id': self.raw_course.id,
+            'name': self.raw_course.name,
+            'nickname': self.raw_course.nickname,
+            'teacher_id': self.teacher_id,
+            'teacher': self.teacher.name,
+            'url': url_for('api.get_courses_by_id', id=self.id, _external=True),
         }
         return course_json
+
+    @staticmethod
+    def from_json(post_json):
+        when_code = post_json.get('when_code')
+        week = post_json.get('week')
+        week_raw = post_json.get('week_raw')
+        parity = post_json.get('parity')
+        which_room = post_json.get('which_room')
+        where = post_json.get('where')
+        raw_course_id = post_json.get('raw_course_id')
+        teacher_id = post_json.get('teacher_id')
+
+        raw_course = RawCourse.query.get_or_404(raw_course_id)
+        teacher = User.query.get_or_404(teacher_id)
+
+        if when_code is None or week is None:
+            raise ValidationError("必须含有上课时间(when_code)、上课周次(week)")
+        return Course(teacher, raw_course, when_code=when_code, week=week, week_raw=week_raw,
+                      parity=parity, which_room=which_room, where=where)
 
     def operate_classes(self, operation, _classes):
         # type: (int, list) -> None

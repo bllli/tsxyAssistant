@@ -34,7 +34,7 @@ def verify_password(user_identity, password):
     if len(user_identity) == 10:
         user = User.query.filter_by(school_code=user_identity).first()
     else:
-        user = User.query.filter_by(username=user_identity).first()
+        user = User.query.filter_by(username=unicode(user_identity)).first()
     if not user:
         try:
             user_code = tsxypy.is_tsxy_stu(user_identity, password)
@@ -52,14 +52,13 @@ def verify_password(user_identity, password):
     return user.verify_password(password)
 
 
-@auth.error_handler
-def auth_error():
-    """登陆错误时会被调用
-
-    :return: 未认证异常Json
-    """
-    return unauthorized('Invalid credentials')
-
+# @auth.error_handler
+# def auth_error():
+#     """登陆错误时会被调用
+#
+#     :return: 未认证异常Json
+#     """
+#     return unauthorized('Invalid credentials')
 
 @api.before_request
 @auth.login_required
@@ -68,10 +67,11 @@ def before_request():
 
     过滤掉未经确认的账户
 
-    :return: 未经确认的Json
+    :return: 未经确认error Json
     """
-    if not g.current_user.is_anonymous and \
-            not g.current_user.confirmed:
+    if g.current_user.is_anonymous:
+        return unauthorized('Invalid credentials')
+    elif not g.current_user.confirmed:
         return forbidden('Unconfirmed account')
 
 
