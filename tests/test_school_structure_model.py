@@ -51,7 +51,7 @@ class SchoolStructureModelTestCase(unittest.TestCase):
         c = _Class(name='14CS1')
         db.session.add(c)
         db.session.commit()
-        u = User(name='bllli')
+        u = User(name=u'bllli')
         u._class = c
         db.session.add(c)
         db.session.commit()

@@ -61,7 +61,7 @@ def get_courses_by_id(id):
 def get_courses():
     """查看所有课程"""
     courses = Course.query.all()
-    return jsonify({'raw_courses': [c.to_json() for c in courses]})
+    return jsonify({'courses': [c.to_json() for c in courses]})
 
 
 @api.route('/courses/in-charge', methods=['GET'])
