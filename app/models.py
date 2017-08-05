@@ -14,7 +14,7 @@ Attributes:
 from datetime import datetime
 
 import tsxypy
-from flask import current_app, url_for
+from flask import current_app, url_for, abort
 from flask_login import UserMixin, AnonymousUserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -341,7 +341,7 @@ class Course(db.Model):
     __tablename__ = 'courses'
     id = db.Column(db.Integer, primary_key=True)  #: 课程id
     when_code = db.Column(db.String(32))  #: 上课时间代号
-    week = db.Column(db.String(32))  #: 上课周次
+    week = db.Column(db.String(64))  #: 上课周次
     week_raw = db.Column(db.String(32))  #: 未解析的上课周次
     parity = db.Column(db.String(32))  #: 单双周属性
     which_room = db.Column(db.String(32))  #: 上课教室
@@ -359,11 +359,27 @@ class Course(db.Model):
         self.teacher = teacher
         self.raw_course = raw_course
 
+    @staticmethod
+    def is_safety(string):
+        # type: (str) -> None
+        allow_chr = [' ', ',', '[', ']', ',', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+        try:
+            for each in string:
+                if each not in allow_chr:
+                    raise ValueError("含有非安全字符")
+            return True
+        except ValueError:
+            return False
+
     def to_json(self):
+        if Course.is_safety(self.week):
+            week = eval(self.week)
+        else:
+            week = None
         course_json = {
             'id': self.id,
             'when_code': self.when_code,
-            'week': self.week,
+            'week': week,
             'week_raw': self.week_raw,
             'parity': self.parity,
             'which_room': self.which_room,
@@ -380,7 +396,13 @@ class Course(db.Model):
     @staticmethod
     def from_json(post_json):
         when_code = post_json.get('when_code')
-        week = post_json.get('week')
+        week_str = str(post_json.get('week'))
+        print(week_str)
+        print(Course.is_safety(week_str))
+        if Course.is_safety(week_str):
+            week = week_str
+        else:
+            abort(400, u"week字段中有错误")
         week_raw = post_json.get('week_raw')
         parity = post_json.get('parity')
         which_room = post_json.get('which_room')

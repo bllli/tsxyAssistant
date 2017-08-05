@@ -60,3 +60,8 @@ def page_not_found(e):
 def unauthorized_handler(e):
     """调用abort(401)，即未认证错误时，将将自动执行该函数"""
     return unauthorized("Invalid credentials")
+
+
+@api.app_errorhandler(400)
+def bad_request_handler(e):
+    return bad_request(e.description)
