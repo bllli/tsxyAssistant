@@ -9,9 +9,11 @@
 《唐小二》，做唐院师生的好帮手。
 
 .. toctree::
-     usage.rst
-     api.rst
-     data.rst
+   :maxdepth: 2
+
+   usage.rst
+   api.rst
+   data.rst
 
 E-R图
 
