@@ -79,7 +79,8 @@ class CoursesAPITestCase(unittest.TestCase):
                                         'raw_course_id': self.raw_course.id,
                                         'teacher_id': self.teacher.id,
                                         'when_code': '011',  # 周一第一节
-                                        'week': '1',
+                                        'week': [1, 2, 3, 5, 7, 8, 9],
+                                        'week_raw': '[1-3, 5, 7-9]'
                                     }))
         self.assertTrue(response.status_code == 201)
         url = response.headers.get('Location')
@@ -94,6 +95,7 @@ class CoursesAPITestCase(unittest.TestCase):
         self.assertTrue(response_json.get('name') == self.raw_course.name)
         self.assertTrue(response_json.get('teacher') == self.teacher.name)
         self.assertTrue(response_json.get('when_code') == '011')
+        self.assertTrue(5 in response_json.get('week'))
 
     def test_get_all_raw_courses(self):
         response = self.client.get(url_for('api.get_raw_courses'),

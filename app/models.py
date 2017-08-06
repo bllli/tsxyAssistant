@@ -361,7 +361,7 @@ class Course(db.Model):
 
     @staticmethod
     def is_safety(string):
-        # type: (str) -> None
+        # type: (str) -> bool
         allow_chr = [' ', ',', '[', ']', ',', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
         try:
             for each in string:
@@ -372,7 +372,7 @@ class Course(db.Model):
             return False
 
     def to_json(self):
-        if Course.is_safety(self.week):
+        if self.week is not None and Course.is_safety(self.week):
             week = eval(self.week)
         else:
             week = None
@@ -396,10 +396,11 @@ class Course(db.Model):
     @staticmethod
     def from_json(post_json):
         when_code = post_json.get('when_code')
-        week_str = str(post_json.get('week'))
-        print(week_str)
-        print(Course.is_safety(week_str))
-        if Course.is_safety(week_str):
+        week = post_json.get('week')
+        if when_code is None or week is None:
+            raise ValidationError("必须含有上课时间(when_code)、上课周次(week)")
+        week_str = str(week)
+        if week_str is not None and Course.is_safety(week_str):
             week = week_str
         else:
             abort(400, u"week字段中有错误")
@@ -413,8 +414,6 @@ class Course(db.Model):
         raw_course = RawCourse.query.get_or_404(raw_course_id)
         teacher = User.query.get_or_404(teacher_id)
 
-        if when_code is None or week is None:
-            raise ValidationError("必须含有上课时间(when_code)、上课周次(week)")
         return Course(teacher, raw_course, when_code=when_code, week=week, week_raw=week_raw,
                       parity=parity, which_room=which_room, where=where)
 
