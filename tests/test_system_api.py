@@ -41,8 +41,10 @@ class SystemApiTestCase(unittest.TestCase):
         self.assertTrue(response.status_code == 200)
         response_json = json.loads(response.data.decode('utf-8'))
         self.assertIsNotNone(response_json)
-        self.assertTrue(response_json['ADMINISTER'] == 0x80)
-        self.assertTrue(response_json['administrator'] == 0xff)
+        self.assertIsNotNone(response_json.get('permissions'))
+        self.assertTrue({'permission': 'ADMINISTER',
+                         'value': 0x80,
+                         } in response_json.get('permissions'))
 
     def test_get_roles(self):
         response = self.client.get(url_for('api.get_roles'),

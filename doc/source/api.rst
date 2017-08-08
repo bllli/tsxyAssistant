@@ -2,6 +2,7 @@ Api
 ===
 
 .. toctree::
+    api/system.rst
     api/user.rst
     api/course.rst
     api/score.rst

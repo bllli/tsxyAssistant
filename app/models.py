@@ -44,12 +44,12 @@ class Permission:
 
     @staticmethod
     def to_json():
-        json_permission = {}
+        permissions = []
         for member in dir(Permission):
             value = eval('Permission.' + member)
-            if isinstance(value, int):
-                json_permission[member] = value
-        return json_permission
+            if isinstance(value, int) and member[0].isupper():
+                permissions.append({'permission': member, 'value': value})
+        return {'permissions': permissions}
 
 
 class Role(db.Model):
