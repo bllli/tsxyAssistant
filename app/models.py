@@ -34,7 +34,7 @@ class Permission:
     VIEW_SCORE = 0x02  #: 查看成绩
     VIEW_ALL_SCHEDULE = 0x04  #: 查看所有人的课程表
     VIEW_ALL_SCORE = 0x08  #: 查看所有人的成绩
-    MODIFY = 0x0f  #: 编辑权限
+    MODIFY = 0x10  #: 编辑权限
     ADMINISTER = 0x80  #: 管理员权限
 
     student = VIEW_SCHEDULE | VIEW_SCORE
@@ -626,3 +626,31 @@ def localtime(utc_time):
     from pytz import timezone
     local_time = utc_time.replace(tzinfo=timezone('UTC')).astimezone(timezone('Asia/Chongqing'))
     return local_time.strftime('%Y-%m-%d %H:%M:%S %Z')
+
+
+class Version(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    new = db.Column(db.Boolean)
+    version = db.Column(db.String(32))
+    download_link_android = db.Column(db.Text)
+    whatsnew = db.Column(db.Text)
+
+    def to_json(self):
+        return {
+            'version': self.version,
+            'download_android': self.download_link_android,
+            'download_qr_url': 'http://qr.topscan.com/api.php?'
+                               'text=%s&logo=http://otl5stjju.bkt.clouddn.com/logo.png' % self.download_link_android,
+            'whatsnew': self.whatsnew,
+        }
+
+    @staticmethod
+    def new_version(version_str, download_link, whatsnew):
+        # type: (str, str, str) ->None
+        for each in Version.query.filter_by(new=True).all():
+            each.new = False
+            db.session.add(each)
+        version = Version(new=True, version=version_str, download_link_android=download_link,
+                          whatsnew=whatsnew)
+        db.session.add(version)
+        db.session.commit()

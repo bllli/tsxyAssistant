@@ -8,6 +8,15 @@ from app import create_app, db
 from app.models import Role, User, RawCourse, Course
 
 
+def get_api_headers(username, password):
+    return {
+        'Authorization': 'Basic ' + b64encode(
+            (username + ':' + password).encode('utf-8')).decode('utf-8'),
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+    }
+
+
 class CoursesAPITestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app('testing')
@@ -35,14 +44,6 @@ class CoursesAPITestCase(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    def get_api_headers(self, username, password):
-        return {
-            'Authorization': 'Basic ' + b64encode(
-                (username + ':' + password).encode('utf-8')).decode('utf-8'),
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        }
-
     def test_no_auth(self):
         response = self.client.get(url_for('api.get_raw_courses'),
                                    content_type='application/json')
@@ -51,7 +52,7 @@ class CoursesAPITestCase(unittest.TestCase):
     def test_raw_courses(self):
         # 测试新建原课程功能
         response = self.client.post(url_for('api.new_raw_courses'),
-                                    headers=self.get_api_headers(self.teacher.username, 'cat'),
+                                    headers=get_api_headers(self.teacher.username, 'cat'),
                                     data=json.dumps({
                                         'name': '意识与走位',
                                         'course_code': '10086',
@@ -62,7 +63,7 @@ class CoursesAPITestCase(unittest.TestCase):
 
         # 获取刚刚新建的原课程
         response = self.client.get(url,
-                                   headers=self.get_api_headers(self.teacher.username, 'cat'))
+                                   headers=get_api_headers(self.teacher.username, 'cat'))
         self.assertTrue(response.status_code == 200)
         response_json = json.loads(response.data.decode('utf-8'))
         # print(json.dumps(response_json))
@@ -74,7 +75,7 @@ class CoursesAPITestCase(unittest.TestCase):
     def test_courses(self):
         # 新建详细课程
         response = self.client.post(url_for('api.new_courses'),
-                                    headers=self.get_api_headers(self.teacher.username, 'cat'),
+                                    headers=get_api_headers(self.teacher.username, 'cat'),
                                     data=json.dumps({
                                         'raw_course_id': self.raw_course.id,
                                         'teacher_id': self.teacher.id,
@@ -88,7 +89,7 @@ class CoursesAPITestCase(unittest.TestCase):
 
         # 查询刚才新建的详细课程
         response = self.client.get(url,
-                                   headers=self.get_api_headers(self.teacher.username, 'cat'))
+                                   headers=get_api_headers(self.teacher.username, 'cat'))
         self.assertTrue(response.status_code == 200)
         response_json = json.loads(response.data.decode('utf-8'))
         self.assertTrue(response_json.get('url') == url)
@@ -99,7 +100,7 @@ class CoursesAPITestCase(unittest.TestCase):
 
     def test_get_all_raw_courses(self):
         response = self.client.get(url_for('api.get_raw_courses'),
-                                   headers=self.get_api_headers(self.teacher.username, 'cat'))
+                                   headers=get_api_headers(self.teacher.username, 'cat'))
 
         self.assertTrue(response.status_code == 200)
         response_json = json.loads(response.data.decode('utf-8'))
@@ -108,7 +109,7 @@ class CoursesAPITestCase(unittest.TestCase):
 
     def test_get_all_courses(self):
         response = self.client.get(url_for('api.get_courses'),
-                                   headers=self.get_api_headers(self.teacher.username, 'cat'))
+                                   headers=get_api_headers(self.teacher.username, 'cat'))
         self.assertTrue(response.status_code == 200)
         response_json = json.loads(response.data.decode('utf-8'))
         self.assertTrue(self.teacher.name in
