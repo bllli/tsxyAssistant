@@ -224,12 +224,14 @@ class Temp(db.Model):
     identify = db.Column(db.String)
     content = db.Column(db.Text)
     date = db.Column(db.DateTime(), default=datetime.utcnow)
+    life = db.Column(db.Integer)
 
     @staticmethod
-    def set_temp(mark, identify, content):
-        # type: (str, str, object ) -> None
+    def set_temp(mark, identify, content, life=2):
+        # type: (str, str, object, int) -> None
         """放置缓存
 
+        :param life:
         :param string mark: 标记 声明缓存的用途
         :param string identify: 用户标识 用于区分不同用户的缓存记录
         :param content: 内容 多为dict
@@ -238,8 +240,9 @@ class Temp(db.Model):
         temps = Temp.query.filter_by(mark=mark, identify=identify).all()
         for t in temps:
             db.session.delete(t)
-        t = Temp(mark=mark, identify=identify, content=str(content))
+        t = Temp(mark=mark, identify=identify, content=str(content), life=life)
         db.session.add(t)
+        db.session.commit()
 
     @staticmethod
     def get_temp(mark, identify):
@@ -253,7 +256,7 @@ class Temp(db.Model):
         if not t:
             return None
         delta = datetime.utcnow() - t.date
-        if delta.days < 2:
+        if delta.days < t.life:
             content = eval(t.content)
             if isinstance(content, type({})):
                 content['cache'] = True
@@ -283,7 +286,7 @@ class Temp(db.Model):
 
     @staticmethod
     def set_school_structure(school_structure):
-        Temp.set_temp(mark='school_structure', identify=None, content=school_structure)
+        Temp.set_temp(mark='school_structure', identify=None, content=school_structure, life=360)
 
     @staticmethod
     def get_school_structure():
