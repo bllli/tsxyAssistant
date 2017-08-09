@@ -11,7 +11,7 @@ from tsxypy.Exception import TsxyException
 from . import api
 from .errors import unauthorized, forbidden
 from .. import db
-from ..models import User, AnonymousUser
+from ..models import User, AnonymousUser, Role
 
 auth = HTTPBasicAuth()
 
@@ -31,16 +31,22 @@ def verify_password(user_identity, password):
         g.current_user = User.verify_auth_token(user_identity)
         g.token_used = True
         return g.current_user is not None
-    if len(user_identity) == 10:
+    if len(user_identity) == 10 or user_identity[0] in ['t', 'T']:
         user = User.query.filter_by(school_code=user_identity).first()
     else:
         user = User.query.filter_by(username=unicode(user_identity)).first()
-    if not user:
+    if not user:  #: 尝试登录
         try:
-            user_code = tsxypy.is_tsxy_stu(user_identity, password)
-            if len(user_identity) == 10 and user_code:
+            if len(user_identity) == 10:
+                user_code = tsxypy.is_tsxy_stu(user_identity, password)
+                role = Role.query.filter_by(name='Student').first()
+            elif user_identity[0] in ['t', 'T']:
+                user_code = tsxypy.is_tsxy_teacher(user_identity, password)
+                role = Role.query.filter_by(name='Teacher_V').first()
+            if user_code:
                 user = User(school_code=user_identity, password=password, user_code=user_code)
                 user.confirmed = True
+                user.role = role
                 db.session.add(user)
                 db.session.commit()
             else:
