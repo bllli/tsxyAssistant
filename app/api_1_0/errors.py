@@ -42,6 +42,12 @@ def forbidden(message):
     return response
 
 
+def bad_gateway(message):
+    response = jsonify({'error': 'bad_gateway', 'message': message})
+    response.status_code = 502
+    return response
+
+
 @api.errorhandler(ValidationError)
 def validation_error(e):
     """出现访问错误时，Flask将自动调用该函数"""
@@ -51,7 +57,7 @@ def validation_error(e):
 @api.app_errorhandler(404)
 def page_not_found(e):
     """调用abort(404)，即页面未找到错误时，将会自动执行该函数"""
-    response = jsonify({'error': 'not found'})
+    response = jsonify({'error': 'not found', 'message': e.description or 'not found'})
     response.status_code = 404
     return response
 
@@ -59,9 +65,19 @@ def page_not_found(e):
 @api.app_errorhandler(401)
 def unauthorized_handler(e):
     """调用abort(401)，即未认证错误时，将将自动执行该函数"""
-    return unauthorized("Invalid credentials")
+    return unauthorized(e.description or "Invalid credentials")
 
 
 @api.app_errorhandler(400)
 def bad_request_handler(e):
-    return bad_request(e.description)
+    return bad_request(e.description or 'bad request')
+
+
+@api.app_errorhandler(403)
+def forbidden_handler(e):
+    return forbidden(e.description or 'forbidden')
+
+
+@api.app_errorhandler(502)
+def bad_gateway_handler(e):
+    return bad_gateway(e.description or 'bad gateway')

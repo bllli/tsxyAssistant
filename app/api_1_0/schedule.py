@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 """
 schedule.py
-====
+===========
 课程表相关接口
 """
 from datetime import date
 
-from flask import jsonify, request, g
+from flask import jsonify, request, g, abort
 from tsxypy.Exception import NoneScheduleException, NetException
 from tsxypy.ScheduleCatcherFromStuId import ScheduleCatcherFromStuId
 
 from . import api
-from .errors import unauthorized
-from ..models import Temp
+from ..models import Temp, Permission
 
 
 def this_school_year():
@@ -40,15 +39,14 @@ def get_schedule():
     use_cache = False if request.args.get('use_cache') == "False" else True
     school_code = request.args.get('stu_id')
 
-    if g.current_user.is_anonymous:
-        return unauthorized('Invalid credentials')
-    if not school_code:
-        school_code = g.current_user.school_code
+    if school_code:  # 来自指定的学号
+        if not g.current_user.can(Permission.VIEW_ALL_SCHEDULE):
+            abort(403, '需要 VIEW_ALL_SCHEDULE 权限')
+    else:
+        school_code = g.current_user.school_code  # 来自用户自己的学号
     if school_code is None:
-        response = jsonify({'error': '该用户未设定学号'})
-        response.status_code = 404
-        return response
-    if use_cache:
+        abort(404, '该用户未设定学号')
+    if use_cache:  # 获取缓存
         schedule = Temp.get_schedule_cache_for_stu_id(school_code)
         if schedule:
             return jsonify(schedule)
@@ -59,12 +57,7 @@ def get_schedule():
         d['cache'] = False
         d['cache-date'] = None
     except NoneScheduleException as e:
-        print(e)
-        response = jsonify({'error': '该用户没有最新课表!'})
-        response.status_code = 404
-        return response
+        abort(404, '该用户没有最新课表!')
     except NetException:
-        response = jsonify({'error': '教务系统出现网络问题'})
-        response.status_code = 502
-        return response
+        abort(502, '教务系统出现网络问题')
     return jsonify(d)
