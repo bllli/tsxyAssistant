@@ -108,6 +108,20 @@ class CoursesAPITestCase(unittest.TestCase):
         url = response.headers.get('Location')
         self.assertIsNotNone(url)
 
+        # 测试新建课程接口 包含错误的班级信息 应返回400错误
+        response = self.client.post(url_for('api.new_courses'),
+                                    headers=get_api_headers(self.teacher.username, 'cat'),
+                                    data=json.dumps({
+                                        'raw_course_id': self.raw_course.id,
+                                        'teacher_id': self.teacher.id,
+                                        'when_code': '011',  # 周一第一节
+                                        'week': [1, 2, 3, 5, 7, 8, 9],
+                                        'week_raw': '[1-3, 5, 7-9]',
+                                        'classes': [c1.id, 9999],
+                                    }))
+
+        self.assertTrue(response.status_code == 400)
+
         # 查询刚才新建的详细课程
         response = self.client.get(url,
                                    headers=get_api_headers(self.teacher.username, 'cat'))
