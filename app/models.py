@@ -326,8 +326,8 @@ class RawCourse(db.Model):
         nickname = json_post.get('nickname')
         course_code = json_post.get('course_code')
         worth = json_post.get('worth')
-        if name is None or name == '' or course_code is None or course_code == '':
-            raise ValidationError('Must have name and course_code')
+        if name is None or name == '':
+            raise ValidationError('Must have name')
         return RawCourse(name=name, nickname=nickname, course_code=course_code, worth=worth)
 
 
@@ -400,6 +400,7 @@ class Course(db.Model):
 
     @staticmethod
     def from_json(post_json):
+        """通过用户传入Json新建课程对象"""
         when_code = post_json.get('when_code')
         week = post_json.get('week')
         if when_code is None or week is None:
@@ -409,6 +410,15 @@ class Course(db.Model):
             week = week_str
         else:
             abort(400, u"week字段中有错误")
+        # 检测用户传入的课程字段有无错误
+        classes_id_list = post_json.get('classes')
+        if classes_id_list is not None:
+            for c_id in classes_id_list:
+                c = _Class.query.filter_by(id=c_id).first()
+                if c is None:
+                    abort(400, u'课程班级信息中有错误')
+        else:
+            abort(400, u'缺少课程班级信息')
         week_raw = post_json.get('week_raw')
         parity = post_json.get('parity')
         which_room = post_json.get('which_room')
@@ -421,17 +431,10 @@ class Course(db.Model):
                         parity=parity, which_room=which_room, where=where)
         db.session.add(course)
         db.session.commit()
-        classes_id_list = post_json.get('classes')
-        if classes_id_list is not None:
-            for c_id in classes_id_list:
+        # 插入到数据库后 添加课程的上课班级
+        for c_id in classes_id_list:
                 c = _Class.query.filter_by(id=c_id).first()
-                if c is not None:
-                    course.classes.append(c)
-                else:
-                    abort(400, u'课程班级信息中有错误')
-
-        else:
-            abort(400, u'缺少课程班级信息')
+                course.classes.append(c)
         return course
 
     def operate_classes(self, operation, _classes):
