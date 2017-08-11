@@ -2,10 +2,10 @@
 import unittest
 import json
 from base64 import b64encode
-from flask import current_app, url_for
+from flask import url_for
 
 from app import create_app, db
-from app.models import Role, User, RawCourse, Course
+from app.models import Role, User, RawCourse, Course, _Class
 
 
 def get_api_headers(username, password):
@@ -73,7 +73,7 @@ class CoursesAPITestCase(unittest.TestCase):
         self.assertTrue(response_json['worth'] == '100')
 
     def test_courses(self):
-        # 新建详细课程
+        # 新建详细课程 无班级信息 应无法正常提交
         response = self.client.post(url_for('api.new_courses'),
                                     headers=get_api_headers(self.teacher.username, 'cat'),
                                     data=json.dumps({
@@ -83,6 +83,26 @@ class CoursesAPITestCase(unittest.TestCase):
                                         'week': [1, 2, 3, 5, 7, 8, 9],
                                         'week_raw': '[1-3, 5, 7-9]'
                                     }))
+        self.assertTrue(response.status_code == 400)
+        # 测试新建课程接口 包含班级信息。应返回正常结果
+        c1 = _Class(name=u'14计本1')
+        c2 = _Class(name=u'14计本2')
+        c3 = _Class(name=u'15计本1')
+        db.session.add(c1)
+        db.session.add(c2)
+        db.session.add(c3)
+        db.session.commit()
+        response = self.client.post(url_for('api.new_courses'),
+                                    headers=get_api_headers(self.teacher.username, 'cat'),
+                                    data=json.dumps({
+                                        'raw_course_id': self.raw_course.id,
+                                        'teacher_id': self.teacher.id,
+                                        'when_code': '011',  # 周一第一节
+                                        'week': [1, 2, 3, 5, 7, 8, 9],
+                                        'week_raw': '[1-3, 5, 7-9]',
+                                        'classes': [c1.id, c2.id],
+                                    }))
+
         self.assertTrue(response.status_code == 201)
         url = response.headers.get('Location')
         self.assertIsNotNone(url)
@@ -97,6 +117,9 @@ class CoursesAPITestCase(unittest.TestCase):
         self.assertTrue(response_json.get('teacher') == self.teacher.name)
         self.assertTrue(response_json.get('when_code') == '011')
         self.assertTrue(5 in response_json.get('week'))
+        self.assertTrue(c1.id in response_json.get('classes'))
+        self.assertTrue(c2.id in response_json.get('classes'))
+        self.assertTrue(c3.id not in response_json.get('classes'))
 
     def test_get_all_raw_courses(self):
         response = self.client.get(url_for('api.get_raw_courses'),

@@ -5,8 +5,9 @@ schedule.py
 课程表相关接口
 """
 from datetime import date
-
 from flask import jsonify, request, g, abort
+from requests.exceptions import ConnectionError, ConnectTimeout
+
 from tsxypy.Exception import NoneScheduleException, NetException
 from tsxypy.ScheduleCatcherFromStuId import ScheduleCatcherFromStuId
 
@@ -58,6 +59,6 @@ def get_schedule():
         d['cache-date'] = None
     except NoneScheduleException as e:
         abort(404, '该用户没有最新课表!')
-    except NetException:
+    except (NetException, ConnectionError, ConnectTimeout):
         abort(502, '教务系统出现网络问题')
     return jsonify(d)

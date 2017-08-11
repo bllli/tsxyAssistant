@@ -393,6 +393,7 @@ class Course(db.Model):
             'teacher_id': self.teacher_id,
             'teacher': self.teacher.name,
             'url': url_for('api.get_courses_by_id', id=self.id, _external=True),
+            'classes': [c.id for c in self.classes],
         }
         return course_json
 
@@ -413,12 +414,24 @@ class Course(db.Model):
         where = post_json.get('where')
         raw_course_id = post_json.get('raw_course_id')
         teacher_id = post_json.get('teacher_id')
-
         raw_course = RawCourse.query.get_or_404(raw_course_id)
         teacher = User.query.get_or_404(teacher_id)
+        course = Course(teacher, raw_course, when_code=when_code, week=week, week_raw=week_raw,
+                        parity=parity, which_room=which_room, where=where)
+        db.session.add(course)
+        db.session.commit()
+        classes_id_list = post_json.get('classes')
+        if classes_id_list is not None:
+            for c_id in classes_id_list:
+                c = _Class.query.filter_by(id=c_id).first()
+                if c is not None:
+                    course.classes.append(c)
+                else:
+                    abort(400, u'课程班级信息中有错误')
 
-        return Course(teacher, raw_course, when_code=when_code, week=week, week_raw=week_raw,
-                      parity=parity, which_room=which_room, where=where)
+        else:
+            abort(400, u'缺少课程班级信息')
+        return course
 
     def operate_classes(self, operation, _classes):
         # type: (int, list) -> None

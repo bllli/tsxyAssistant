@@ -51,6 +51,8 @@ class CourseModelTestCase(unittest.TestCase):
         c.operate_classes(Operation.REMOVE, [c1])
         self.assertFalse(c in c1.courses)
         self.assertTrue(c2 in c.classes)
+        self.assertTrue(c2.id in c.to_json().get('classes'))
+        self.assertFalse(c3.id in c.to_json().get('classes'))
 
     def test_appoint_substitute_teacher(self):
         rc = RawCourse.query.filter_by(name=u"邓小平理论与三个代表重要思想").first()
