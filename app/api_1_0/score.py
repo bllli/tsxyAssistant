@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
+from __future__ import absolute_import, unicode_literals
 from flask import jsonify, request, g
 from tsxypy import ScoreCatcher
 from tsxypy.Exception import ScoreException, NetException

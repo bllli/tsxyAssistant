@@ -1,9 +1,10 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
 """courses.py
 
 课程接口
 """
 
+from __future__ import absolute_import, unicode_literals
 from flask import jsonify, request, g, url_for
 
 from . import api

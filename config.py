@@ -1,10 +1,11 @@
-# -*- coding:utf-8 -*-
+# coding=utf-8
 """配置文件
 
 保存了项目需要的配置信息、密码及管理员邮箱等信息。
 
 不要填写明文数据，应设置环境变量。
 """
+from __future__ import absolute_import, unicode_literals
 import os
 
 #: 本文件的绝对路径。 用于决定SQLite2数据库文件存储位置

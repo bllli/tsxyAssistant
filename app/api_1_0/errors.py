@@ -1,9 +1,10 @@
-# -*- coding:utf-8 -*-
+# coding=utf-8
 """
 error.py
 ====
 错误处理
 """
+from __future__ import absolute_import, unicode_literals
 from flask import jsonify
 from app.exceptions import ValidationError
 from . import api

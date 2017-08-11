@@ -1,3 +1,4 @@
+from __future__ import absolute_import, unicode_literals
 from flask import jsonify, g
 
 from . import api

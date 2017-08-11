@@ -1,4 +1,4 @@
-# -*- coding:utf-8 -*-
+# coding=utf-8
 """models.py
 
 用于定义ORM中用到的类、关系及某些表中的初始数据及工具函数。
@@ -11,6 +11,7 @@
 Attributes:
 
 """
+from __future__ import absolute_import, unicode_literals
 from datetime import datetime
 
 import tsxypy
@@ -470,7 +471,7 @@ class User(UserMixin, db.Model):
     school_code = db.Column(db.String(16), unique=True, index=True)  #: 学号
     user_code = db.Column(db.String(16), unique=True, index=True)  #: 教务系统用户代号
     username = db.Column(db.String(64), unique=True, index=True)  #: 用户名(自拟)
-    name = db.Column(db.UnicodeText(64))  #: 姓名
+    name = db.Column(db.String(64))  #: 姓名
     about_me = db.Column(db.Text())  #: 个人简介
 
     password_hash = db.Column(db.String(128))  #: (加密过的)密码

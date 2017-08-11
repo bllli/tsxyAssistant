@@ -1,3 +1,5 @@
+# coding=utf-8
+from __future__ import absolute_import, unicode_literals
 from . import main
 # from flask_wtf.csrf import CSRFError
 from flask import redirect, url_for, render_template

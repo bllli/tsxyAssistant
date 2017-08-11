@@ -1,8 +1,9 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
 """认证
 
 确认登入用户的身份
 """
+from __future__ import absolute_import, unicode_literals
 import tsxypy
 from flask import g, jsonify, abort
 from flask_httpauth import HTTPBasicAuth
@@ -31,10 +32,10 @@ def verify_password(user_identity, password):
         g.current_user = User.verify_auth_token(user_identity)
         g.token_used = True
         return g.current_user is not None
-    if len(user_identity) == 10 or user_identity[0] in ['t', 'T']:
+    if len(user_identity) == 10 or user_identity[0] in [u't', u'T']:
         user = User.query.filter_by(school_code=user_identity).first()
     else:
-        user = User.query.filter_by(username=unicode(user_identity)).first()
+        user = User.query.filter_by(username=u"%s" % user_identity).first()
     if not user:  #: 尝试登录
         try:
             if len(user_identity) == 10:
@@ -43,14 +44,13 @@ def verify_password(user_identity, password):
             elif user_identity[0] in ['t', 'T']:
                 user_code = tsxypy.is_tsxy_teacher(user_identity, password)
                 role = Role.query.filter_by(name='Teacher_V').first()
-            if user_code:
-                user = User(school_code=user_identity, password=password, user_code=user_code)
-                user.confirmed = True
-                user.role = role
-                db.session.add(user)
-                db.session.commit()
             else:
                 return False
+            user = User(school_code=user_identity, password=password, user_code=user_code)
+            user.confirmed = True
+            user.role = role
+            db.session.add(user)
+            db.session.commit()
         except TsxyException as e:
             abort(401)
     g.current_user = user

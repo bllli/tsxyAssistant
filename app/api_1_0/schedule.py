@@ -1,9 +1,10 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
 """
 schedule.py
 ===========
 课程表相关接口
 """
+from __future__ import absolute_import, unicode_literals
 from datetime import date
 from flask import jsonify, request, g, abort
 from requests.exceptions import ConnectionError, ConnectTimeout

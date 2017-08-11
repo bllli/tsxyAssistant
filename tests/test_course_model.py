@@ -1,4 +1,5 @@
 # coding=utf-8
+from __future__ import absolute_import, unicode_literals
 import unittest
 from app import create_app, db
 from app.models import User, Role, Operation,  RawCourse, Course, _Class

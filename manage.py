@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*-
+# coding=utf-8
 """服务器脚本
 
 开启、调试、部署, 并便于启用测试环境。
@@ -21,6 +21,14 @@ Examples:
 
         $ python manage.py runserver
 """
+from __future__ import absolute_import, unicode_literals
+import six
+
+if six.PY2:
+    import sys
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+
 import os
 
 from flask_migrate import Migrate, MigrateCommand
