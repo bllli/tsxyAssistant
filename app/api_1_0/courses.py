@@ -80,7 +80,7 @@ def in_charge():
         # 获取教师代课的课程
         courses.extend(current_user.guest_courses)
     elif 'Student' in name:
-        pass
+        courses.extend(current_user._class.courses)
     return jsonify({
         'username': current_user.username,
         'courses': [c.id for c in courses],

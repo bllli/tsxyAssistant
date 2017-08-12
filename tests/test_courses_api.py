@@ -157,15 +157,25 @@ class CoursesAPITestCase(unittest.TestCase):
 
     def test_get_in_charge_courses(self):
         # 课程假数据
+        stu = User(username=u'小学森', password='dog', confirmed=True)
+        class1 = _Class(name=u'14LOL本1')
+        class2 = _Class(name=u'14LOL本2')
+        stu._class = class1
         rc = RawCourse(name=u'打野与反野')
         c = Course(self.teacher, rc)
+        c.classes.append(class2)
         rc2 = RawCourse(name=u'越塔必读——炮塔攻击频率及范围')
         c2 = Course(self.teacher, rc2)
+        c2.classes.append(class1)
         r = Role.query.filter_by(name="Teacher").first()
-        u = User(username="呵呵哒", role=r)
+        u = User(username="呵呵哒", role=r, confirmed=True)
         rc3 = RawCourse(name=u'发育型上单出装指南')
         c3 = Course(u, rc3)
+        c3.classes.append(class1)
 
+        db.session.add(stu)
+        db.session.add(class1)
+        db.session.add(class2)
         db.session.add(rc)
         db.session.add(rc2)
         db.session.add(rc3)
@@ -178,7 +188,10 @@ class CoursesAPITestCase(unittest.TestCase):
         self.assertTrue(c in self.teacher.courses)
         self.assertTrue(c2 in self.teacher.courses)
         self.assertTrue(c3 not in self.teacher.courses)
-
+        self.assertTrue(c not in stu._class.courses)
+        self.assertTrue(c2 in stu._class.courses)
+        self.assertTrue(c3 in stu._class.courses)
+        # 测试教师获取
         response = self.client.get(url_for('api.in_charge'),
                                    headers=get_api_headers(self.teacher.username, 'cat'))
         self.assertTrue(response.status_code == 200)
@@ -189,4 +202,14 @@ class CoursesAPITestCase(unittest.TestCase):
         self.assertTrue(c.id in response_json.get('courses'))
         self.assertTrue(c2.id in response_json.get('courses'))
         self.assertFalse(c3.id in response_json.get('courses'))
-        # [courses.get('teacher') for courses in response_json.get('courses')])
+        # 测试学生获取
+        response = self.client.get(url_for('api.in_charge'),
+                                   headers=get_api_headers(u'小学森', 'dog'))
+        self.assertTrue(response.status_code == 200)
+        response_json = json.loads(response.data.decode('utf-8'))
+        self.assertEqual(u'小学森', response_json.get('username'))
+
+        self.assertIsNotNone(response_json.get('courses'))
+        self.assertTrue(c.id not in response_json.get('courses'))
+        self.assertTrue(c2.id in response_json.get('courses'))
+        self.assertTrue(c3.id in response_json.get('courses'))

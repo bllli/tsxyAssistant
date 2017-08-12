@@ -80,7 +80,6 @@ class CoursesAPITestCase(unittest.TestCase):
 
         self.assertTrue(response.status_code == 404)
         response_json = json.loads(response.data.decode('utf-8'))
-        print(response_json)
         self.assertEqual(response_json.get('message'), '该用户没有最新课表!')
 
     def test_use_cache(self):
