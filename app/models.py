@@ -12,14 +12,15 @@ Attributes:
 
 """
 from __future__ import absolute_import, unicode_literals
+import enum
 from datetime import datetime
 
-import tsxypy
 from flask import current_app, url_for, abort
 from flask_login import UserMixin, AnonymousUserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 
+import tsxypy
 from app.exceptions import ValidationError
 from . import db, login_manager
 
@@ -215,6 +216,12 @@ class _Class(db.Model):
 
     def __repr__(self):
         return '<_Class %r>' % self.name
+
+    def find_check_in(self):
+        check_in_id_list = []
+        check_in_id_list.extend([c.id for c in self.check_in])
+        check_in_id_list.extend([course.check_in.first().id for course in self.courses if course.check_in.first()])
+        return check_in_id_list
 
 
 class Temp(db.Model):
@@ -429,6 +436,7 @@ class Course(db.Model):
         raw_course_id = post_json.get('raw_course_id')
         teacher_id = post_json.get('teacher_id')
         raw_course = RawCourse.query.get_or_404(raw_course_id)
+        # ToDo: 传递教师id值并不合适
         teacher = User.query.get_or_404(teacher_id)
         course = Course(teacher, raw_course, when_code=when_code, week=week, week_raw=week_raw,
                         parity=parity, which_room=which_room, where=where)
@@ -491,6 +499,11 @@ class CheckIn(db.Model):
     duration = db.Column(db.Integer, default=10)  #: 签到持续分钟
     ssid = db.Column(db.Text)  #: 签到所用教师放出的ssid
 
+    class CheckInType(enum.Enum):
+        classes = 1
+        course = 2
+    check_in_type = db.Column(db.Enum(CheckInType))
+
     sponsor_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
     classes = db.relationship('_Class',
@@ -502,14 +515,43 @@ class CheckIn(db.Model):
                             backref=db.backref('check_in', lazy='dynamic'),
                             lazy='dynamic')
 
-    # def to_json(self):
-    #     check_in_json = {
-    #         'id': self.id,
-    #         'name': self.name,
-    #         'start_time': self.start_time,
-    #         'ssid': self.ssid,
-    #     }
-    #     return check_in_json
+    @staticmethod
+    def from_json(json_post):
+        """发起签到任务"""
+        name = json_post.get('name') if json_post.get('name') else "签到@%s" % localtime(datetime.utcnow())
+        ssid = json_post.get('ssid')
+        check_in_type = json_post.get('check_in_type')
+        if ssid is None or ssid == '':
+            raise ValidationError('必须有ssid')
+        check = CheckIn(spomsor_id=g.current_user.id, name=name, ssid=ssid)
+        if check_in_type is None:
+            raise ValidationError('必须填写签到类型(按班级:1, 按课程:2)')
+        elif check_in_type == CheckIn.CheckInType.classes:
+            classes_id_list = json_post.get('classes')
+            for c_id in classes_id_list:
+                c = _Class.query.get_or_404(c_id)
+                check.classes.append(c)
+        elif check_in_type == CheckIn.CheckInType.course:
+            course = Course.query.get_or_404(check_in_type)
+            check.course = course
+        else:
+            raise ValidationError('不存在的类型值')
+        return check
+
+    def to_json(self):
+        """获取签到状态"""
+        check_in_json = {
+            'id': self.id,
+            'name': self.name,
+            'start_time': localtime(self.start_time),
+            'ssid': self.ssid,
+            'type': self.check_in_type.value,
+            'sponsor_id': self.sponsor_id,
+            'course_id': self.course_id,
+            'classes_id': [c.id for c in self.classes],
+            'users_id': [u.id for u in self.users],
+        }
+        return check_in_json
 
 
 class User(UserMixin, db.Model):

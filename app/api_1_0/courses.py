@@ -80,8 +80,12 @@ def in_charge():
         # 获取教师代课的课程
         courses.extend(current_user.guest_courses)
     elif 'Student' in name:
-        courses.extend(current_user._class.courses)
+        if current_user._class:
+            courses.extend(current_user._class.courses)
     return jsonify({
         'username': current_user.username,
         'courses': [c.id for c in courses],
     })
+
+# TODO: 学生初始化时要求确认班级信息 保证学生都有班级 新增课程
+# 对于唐院学生来说，可以通过成绩抓取/课程抓取功能确认班级名称 再到整理好学校结构数据库中查询 赋值即可
