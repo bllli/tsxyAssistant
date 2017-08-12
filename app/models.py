@@ -331,6 +331,7 @@ class RawCourse(db.Model):
         return RawCourse(name=name, nickname=nickname, course_code=course_code, worth=worth)
 
 
+# 代课关系 一位老师能为多个课程代课 一个课程也能找多个代课老师
 substitutes = db.Table('substitutes',
                        db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
                        db.Column('course_id', db.Integer, db.ForeignKey('courses.id')),

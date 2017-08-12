@@ -154,3 +154,39 @@ class CoursesAPITestCase(unittest.TestCase):
                         [courses.get('teacher') for courses in response_json.get('courses')])
         self.assertTrue(self.raw_course.id in
                         [courses.get('raw_course_id') for courses in response_json.get('courses')])
+
+    def test_get_in_charge_courses(self):
+        # 课程假数据
+        rc = RawCourse(name=u'打野与反野')
+        c = Course(self.teacher, rc)
+        rc2 = RawCourse(name=u'越塔必读——炮塔攻击频率及范围')
+        c2 = Course(self.teacher, rc2)
+        r = Role.query.filter_by(name="Teacher").first()
+        u = User(username="呵呵哒", role=r)
+        rc3 = RawCourse(name=u'发育型上单出装指南')
+        c3 = Course(u, rc3)
+
+        db.session.add(rc)
+        db.session.add(rc2)
+        db.session.add(rc3)
+        db.session.add(u)
+        db.session.add(c)
+        db.session.add(c2)
+        db.session.add(c3)
+        db.session.commit()
+        # 确认假数据添加到位
+        self.assertTrue(c in self.teacher.courses)
+        self.assertTrue(c2 in self.teacher.courses)
+        self.assertTrue(c3 not in self.teacher.courses)
+
+        response = self.client.get(url_for('api.in_charge'),
+                                   headers=get_api_headers(self.teacher.username, 'cat'))
+        self.assertTrue(response.status_code == 200)
+        response_json = json.loads(response.data.decode('utf-8'))
+        self.assertEqual(self.teacher.username, response_json.get('username'))
+
+        self.assertIsNotNone(response_json.get('courses'))
+        self.assertTrue(c.id in response_json.get('courses'))
+        self.assertTrue(c2.id in response_json.get('courses'))
+        self.assertFalse(c3.id in response_json.get('courses'))
+        # [courses.get('teacher') for courses in response_json.get('courses')])

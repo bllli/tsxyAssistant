@@ -72,8 +72,16 @@ def in_charge():
     教师调用时，显示教师教授的课程；课代表调用时，显示负责点名的课程
     """
     name = g.current_user.role.name
-    if name is 'teacher':
+    current_user = g.current_user
+    courses = []
+    if 'Teacher' in name:
+        # 获取教师负责的课程
+        courses.extend(current_user.courses)
+        # 获取教师代课的课程
+        courses.extend(current_user.guest_courses)
+    elif 'Student' in name:
         pass
-    elif name is 'student':
-        pass
-    return
+    return jsonify({
+        'username': current_user.username,
+        'courses': [c.id for c in courses],
+    })
