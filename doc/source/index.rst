@@ -100,6 +100,18 @@ E-R图
   _Class "*" -- "1" User : 在
   _Class "n" -- "m" Course : 注册
 
+  entity CheckIn < 签到 > << Entity >>{
+    + id  自增id
+    + name  签到名(默认自动生成)
+    + start_time 签到开始时间
+    + duration 签到持续时间
+    + ssid  签到热点的ssid
+  }
+
+  User "1" -- "*" CheckIn: 发起签到
+  _Class "n" -- "m" CheckIn : 涉及班级
+  Course "1" -- "*" CheckIn : 涉及课程
+  User "n" -- "m" CheckIn : 签到记录
   @enduml
 
 Indices and tables

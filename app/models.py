@@ -359,6 +359,8 @@ class Course(db.Model):
                                           backref=db.backref('guest_courses', lazy='dynamic'),
                                           lazy='dynamic')
 
+    check_in = db.relationship('CheckIn', backref='course', lazy='dynamic')  #: 课程涉及的签到
+
     def __init__(self, teacher, raw_course, **kwargs):
         super(Course, self).__init__(**kwargs)
         self.teacher = teacher
@@ -434,8 +436,8 @@ class Course(db.Model):
         db.session.commit()
         # 插入到数据库后 添加课程的上课班级
         for c_id in classes_id_list:
-                c = _Class.query.filter_by(id=c_id).first()
-                course.classes.append(c)
+            c = _Class.query.filter_by(id=c_id).first()
+            course.classes.append(c)
         return course
 
     def operate_classes(self, operation, _classes):
@@ -468,6 +470,48 @@ class Course(db.Model):
         db.session.commit()
 
 
+# 签到涉及班级
+involved_classes = db.Table('involved_classes',
+                            db.Column('check_in_id', db.Integer, db.ForeignKey('check_in.id')),
+                            db.Column('classes_id', db.Integer, db.ForeignKey('classes.id')),
+                            )
+# 签到人员
+check_in_recodes = db.Table('check_in_recodes',
+                            db.Column('check_in_id', db.Integer, db.ForeignKey('check_in.id')),
+                            db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+                            )
+
+
+class CheckIn(db.Model):
+    """签到表"""
+    __tabelname__ = 'check_in'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))  #: 姓名
+    start_time = db.Column(db.DateTime(), default=datetime.utcnow)  #: 签到开始时间
+    duration = db.Column(db.Integer, default=10)  #: 签到持续分钟
+    ssid = db.Column(db.Text)  #: 签到所用教师放出的ssid
+
+    sponsor_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
+    classes = db.relationship('_Class',
+                              secondary=involved_classes,
+                              backref=db.backref('check_in', lazy='dynamic'),
+                              lazy='dynamic')
+    users = db.relationship('User',
+                            secondary=check_in_recodes,
+                            backref=db.backref('check_in', lazy='dynamic'),
+                            lazy='dynamic')
+
+    # def to_json(self):
+    #     check_in_json = {
+    #         'id': self.id,
+    #         'name': self.name,
+    #         'start_time': self.start_time,
+    #         'ssid': self.ssid,
+    #     }
+    #     return check_in_json
+
+
 class User(UserMixin, db.Model):
     """用户model"""
     __tablename__ = 'users'
@@ -488,6 +532,7 @@ class User(UserMixin, db.Model):
     class_id = db.Column(db.Integer, db.ForeignKey('classes.id'))  #: 所属班级
 
     courses = db.relationship('Course', backref='teacher', lazy='dynamic')  #: 教师负责的课程
+    init_check_in = db.relationship('CheckIn', backref='sponsor', lazy='dynamic')  #: 发起的签到
 
     @staticmethod
     def generate_fake(count=100):
