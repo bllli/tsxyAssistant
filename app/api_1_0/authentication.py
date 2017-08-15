@@ -8,7 +8,6 @@ import tsxypy
 from flask import g, jsonify, abort, request, Response
 from flask_httpauth import HTTPBasicAuth
 from tsxypy.Exception import TsxyException
-from flask_cors import cross_origin
 
 from . import api
 from .errors import unauthorized, forbidden
@@ -69,7 +68,6 @@ def verify_password(user_identity, password):
 
 @api.before_request
 @auth.login_required
-# @cross_origin(supports_credentials=True)
 def before_request():
     """请求前会调用
 
@@ -77,7 +75,6 @@ def before_request():
 
     :return: 未经确认error Json
     """
-    # TODO: 检查是否会先调动此句，导致先调用后定义
     if not request.method == 'OPTIONS':
         if g.current_user.is_anonymous:
             return unauthorized('Invalid credentials')

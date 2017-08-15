@@ -9,7 +9,6 @@ from flask import jsonify, request, g, url_for
 
 from . import api
 from .. import db
-from .authentication import auth
 from .decorators import permission_required
 from ..models import Course, RawCourse, Permission, CheckIn
 

@@ -15,7 +15,6 @@ from ..models import Course, RawCourse, Permission
 
 
 @api.route('/raw_courses/')
-@auth.login_required
 def get_raw_courses():
     """获取所有原课程"""
     raw_courses = RawCourse.query.all()
