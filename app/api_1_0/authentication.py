@@ -5,9 +5,10 @@
 """
 from __future__ import absolute_import, unicode_literals
 import tsxypy
-from flask import g, jsonify, abort
+from flask import g, jsonify, abort, request, Response
 from flask_httpauth import HTTPBasicAuth
 from tsxypy.Exception import TsxyException
+from flask_cors import cross_origin
 
 from . import api
 from .errors import unauthorized, forbidden
@@ -25,7 +26,7 @@ def verify_password(user_identity, password):
     :param str password: 用户输入的密码
     :return bool: 是否通过密码验证(是->True;->False)
     """
-    if user_identity == '':
+    if user_identity == '' or user_identity is None:
         g.current_user = AnonymousUser()
         return True
     if password == '':
@@ -68,6 +69,7 @@ def verify_password(user_identity, password):
 
 @api.before_request
 @auth.login_required
+# @cross_origin(supports_credentials=True)
 def before_request():
     """请求前会调用
 
@@ -75,10 +77,12 @@ def before_request():
 
     :return: 未经确认error Json
     """
-    if g.current_user.is_anonymous:
-        return unauthorized('Invalid credentials')
-    elif not g.current_user.confirmed:
-        return forbidden('Unconfirmed account')
+    # TODO: 检查是否会先调动此句，导致先调用后定义
+    if not request.method == 'OPTIONS':
+        if g.current_user.is_anonymous:
+            return unauthorized('Invalid credentials')
+        elif not g.current_user.confirmed:
+            return forbidden('Unconfirmed account')
 
 
 @api.route('/token')

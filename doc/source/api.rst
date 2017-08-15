@@ -8,3 +8,4 @@ Api
     api/score.rst
     api/school.rst
     api/schedule.rst
+    api/check_in.rst

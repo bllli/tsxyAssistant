@@ -54,9 +54,12 @@ class CheckInModelTestCase(unittest.TestCase):
         check = CheckIn(name="又一次签到", sponsor=self.teacher, check_in_type=CheckIn.CheckInType.course)
         check.course = course
         # 签到 -> 课程 -> 班级 班级如何直接获取签到信息？
+        # 把签到->课程->班级 转化为 签到->班级
         for course in student2._class.courses:
             if course.check_in:
                 self.assertTrue(check in course.check_in)
+        check.classes.extend([c for c in course.classes])
+        self.assertTrue(check in student2._class.check_in)
         self.assertTrue(check in student2._class.courses[0].check_in)
         student2.check_in.append(check)
         self.assertTrue(student2 in check.users)

@@ -25,7 +25,7 @@
 
 权限要求
 
-    Permission.MODIFY
+    Permission.CREATE
 
 请求参数Json::
 
@@ -140,7 +140,7 @@
 
 权限要求
 
-    Permission.MODIFY
+    Permission.CREATE
 
 请求参数Json::
 
@@ -292,5 +292,30 @@
     }
 
 详见课程Json :ref:`course_json`
+
+有关课程
+--------
+
+请求地址::
+
+    v1.0/courses/in-charge
+
+接口描述
+
+    获取指定id课程
+
+请求类型
+
+    HTTP GET
+
+请求参数
+
+    +-----------+------+------+--------+
+    | 参数名    | 类型 | 必选 | 描述   |
+    +===========+======+======+========+
+    | course_id | int  | Y    | 课程id |
+    +-----------+------+------+--------+
+
+正确返回Json示例::
 
 

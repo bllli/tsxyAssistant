@@ -42,8 +42,8 @@ def get_schedule():
     school_code = request.args.get('stu_id')
 
     if school_code:  # 来自指定的学号
-        if not g.current_user.can(Permission.VIEW_ALL_SCHEDULE):
-            abort(403, '需要 VIEW_ALL_SCHEDULE 权限')
+        if not g.current_user.can(Permission.TEACHER_BASE):
+            abort(403, '需要 TEACHER_BASE 权限')
     else:
         school_code = g.current_user.school_code  # 来自用户自己的学号
     if school_code is None:

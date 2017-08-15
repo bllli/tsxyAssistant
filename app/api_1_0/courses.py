@@ -30,7 +30,7 @@ def get_raw_courses_by_id(id):
 
 
 @api.route('/raw_courses/', methods=['POST'])
-@permission_required(Permission.MODIFY)
+@permission_required(Permission.CREATE)
 def new_raw_courses():
     """新增原课程"""
     rc = RawCourse.from_json(request.json)
@@ -41,7 +41,7 @@ def new_raw_courses():
 
 
 @api.route('/courses/', methods=['POST'])
-@permission_required(Permission.MODIFY)
+@permission_required(Permission.CREATE)
 def new_courses():
     """新增详细课程"""
     c = Course.from_json(request.json)

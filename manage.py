@@ -36,7 +36,7 @@ from flask_script import Manager, Shell
 
 from app import create_app, db
 from app.models import User, Role, Permission, School, Department, Specialty, \
-    _Class, Temp, RawCourse, Course, CheckIn
+    _Class, Temp, RawCourse, Course, CheckIn, enrollments, substitutes, involved_classes, check_in_recodes
 
 COV = None
 if os.environ.get('FLASK_COVERAGE'):
@@ -60,7 +60,9 @@ def make_shell_context():
     """为Flask-Script的shell功能导入model类"""
     return dict(app=app, db=db, User=User, Role=Role, Temp=Temp, CheckIn=CheckIn,
                 Permission=Permission, School=School, Department=Department,
-                Specialty=Specialty, _Class=_Class, RawCourse=RawCourse, Course=Course)
+                Specialty=Specialty, _Class=_Class, RawCourse=RawCourse, Course=Course,
+                enrollments=enrollments, substitutes=substitutes, involved_classes=involved_classes,
+                check_in_recodes=check_in_recodes)
 
 
 manager.add_command("shell", Shell(make_context=make_shell_context))

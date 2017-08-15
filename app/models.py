@@ -32,16 +32,18 @@ class Operation:
 
 class Permission:
     """权限类 用于规定权限的二进制数值"""
-    VIEW_SCHEDULE = 0x01  #: 查看课程表
-    VIEW_SCORE = 0x02  #: 查看成绩
-    VIEW_ALL_SCHEDULE = 0x04  #: 查看所有人的课程表
-    VIEW_ALL_SCORE = 0x08  #: 查看所有人的成绩
+    STUDENT_BASE = 0x01  #: 学生基本权限
+    TEACHER_BASE = 0x02  #: 教师基本权限
+    NEW_CHECK_IN = 0x04  #: 发起签到权限
+    CREATE = 0x08  #: 新增权限
     MODIFY = 0x10  #: 编辑权限
     ADMINISTER = 0x80  #: 管理员权限
 
-    student = VIEW_SCHEDULE | VIEW_SCORE
-    teacher = VIEW_ALL_SCHEDULE | VIEW_ALL_SCORE
-    teacher_v = VIEW_ALL_SCHEDULE | VIEW_ALL_SCORE | MODIFY
+    student = STUDENT_BASE
+    student_leader = STUDENT_BASE | NEW_CHECK_IN
+    student_v = STUDENT_BASE | NEW_CHECK_IN | CREATE | MODIFY
+    teacher = TEACHER_BASE | NEW_CHECK_IN
+    teacher_v = TEACHER_BASE | NEW_CHECK_IN | CREATE | MODIFY
     administrator = 0xff
 
     @staticmethod
@@ -72,6 +74,8 @@ class Role(db.Model):
         """
         roles = {
             'Student': (Permission.student, True),
+            'Student_Leader': (Permission.student_leader, False),
+            'Student_V': (Permission.student_v, False),
             'Teacher': (Permission.teacher, False),
             'Teacher_V': (Permission.teacher_v, False),
             'Administrator': (Permission.administrator, False),
@@ -192,6 +196,11 @@ class Specialty(db.Model):
         return '<Specialty %r>' % self.name
 
 
+# class Enrollment(db.Model):
+#     __tablename__ = 'enrollments'
+#     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), primary_key=True)
+#     class_id = db.Column(db.Integer, db.ForeignKey('classes.id'), primary_key=True)
+
 enrollments = db.Table('enrollments',
                        db.Column('course_id', db.Integer, db.ForeignKey('courses.id')),
                        db.Column('class_id', db.Integer, db.ForeignKey('classes.id'))
@@ -213,15 +222,25 @@ class _Class(db.Model):
                               backref=db.backref('classes', lazy='dynamic'),
                               lazy='dynamic')
     """班级与课程的多对多关系定义"""
+    # courses = db.relationship('Course',
+    #                           foreign_keys=[Enrollment.course_id],
+    #                           backref=db.backref('_class', lazy='joined'),
+    #                           lazy='dynamic',
+    #                           cascade='all, delete-orphan')
 
     def __repr__(self):
         return '<_Class %r>' % self.name
 
     def find_check_in(self):
-        check_in_id_list = []
-        check_in_id_list.extend([c.id for c in self.check_in])
-        check_in_id_list.extend([course.check_in.first().id for course in self.courses if course.check_in.first()])
-        return check_in_id_list
+        """获取该课程涉及的所有签到记录"""
+        # check_in_id_list = []
+        # check_in_id_list.extend([c.id for c in self.check_in])
+        # check_in_id_list.extend([course.check_in.first().id for course in self.courses if course.check_in.first()])
+        # return check_in_id_list
+        return {
+            'classes_check_in': [check_in.to_json() for check_in in self.check_in],
+
+        }
 
 
 class Temp(db.Model):
@@ -366,6 +385,12 @@ class Course(db.Model):
                                           backref=db.backref('guest_courses', lazy='dynamic'),
                                           lazy='dynamic')
 
+    # classes = db.relationship('_Class',
+    #                           foreign_keys=[Enrollment.class_id],
+    #                           backref=db.backref('course', lazy='joined'),
+    #                           lazy='dynamic',
+    #                           cascade='all, delete-orphan')
+
     check_in = db.relationship('CheckIn', backref='course', lazy='dynamic')  #: 课程涉及的签到
 
     def __init__(self, teacher, raw_course, **kwargs):
@@ -491,7 +516,12 @@ check_in_recodes = db.Table('check_in_recodes',
 
 
 class CheckIn(db.Model):
-    """签到表"""
+    """签到表
+
+    签到可以指定涉及的班级，用于临时开会点名等情况。
+
+    签到亦可指定某一课程，用于平时上课签到。此时，会将课程涉及的班级拷贝一份冗余数据赋给此签到，便于查询操作。
+    """
     __tabelname__ = 'check_in'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))  #: 姓名
@@ -534,6 +564,7 @@ class CheckIn(db.Model):
         elif check_in_type == CheckIn.CheckInType.course:
             course = Course.query.get_or_404(check_in_type)
             check.course = course
+            check.classes.extend([c for c in course.classes])
         else:
             raise ValidationError('不存在的类型值')
         return check
@@ -552,6 +583,8 @@ class CheckIn(db.Model):
             'users_id': [u.id for u in self.users],
         }
         return check_in_json
+
+
 
 
 class User(UserMixin, db.Model):
@@ -699,7 +732,7 @@ class User(UserMixin, db.Model):
         return User.query.get(data['id'])
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r, name %r, usercode %r>' % (self.username, self.name, self.user_code)
 
 
 class AnonymousUser(AnonymousUserMixin):

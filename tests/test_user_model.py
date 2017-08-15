@@ -82,12 +82,12 @@ class UserModelTestCase(unittest.TestCase):
 
     def test_roles_and_permissions(self):
         u = User(username='john', password='cat')
-        self.assertTrue(u.can(Permission.VIEW_SCORE))
-        self.assertFalse(u.can(Permission.VIEW_ALL_SCORE))
+        self.assertTrue(u.can(Permission.STUDENT_BASE))
+        self.assertFalse(u.can(Permission.TEACHER_BASE))
 
     def test_anonymous_user(self):
         u = AnonymousUser()
-        self.assertFalse(u.can(Permission.VIEW_SCORE))
+        self.assertFalse(u.can(Permission.STUDENT_BASE))
 
     def test_timestamps(self):
         u = User(password='cat')

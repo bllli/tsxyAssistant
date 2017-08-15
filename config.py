@@ -17,9 +17,9 @@ class Config:
 
     """
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'  #: 加密字符串
-    # SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     # """sqlalchemy配置 """
-    # SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
     MAIL_SERVER = 'smtp.googlemail.com'  #: 邮件配置 邮件服务器(str)
     MAIL_PORT = 587  #: 邮件配置 邮件服务器端口
     MAIL_USE_TLS = True  #: 邮件配置
