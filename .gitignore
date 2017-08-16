@@ -41,26 +41,17 @@ nosetests.xml
 # Virtual environment
 venv
 
+# idea stuff
+.idea/
+
 # tmp
 /tmp
-将删除 .idea/
-将删除 cookies
-将删除 doc/_build/
-将删除 doc/_static/
-将删除 doc/_templates/
-将删除 doc/app.api_1_0.rst
-将删除 doc/app.rst
-将删除 doc/config.rst
-将删除 doc/index.rst
-将删除 doc/manage.rst
-将删除 doc/modules.rst
-将删除 doc/tests.rst
-将删除 migrations/
+cookies
+migrations/
 
 # bak
 *.bak
 
 # docs
 doc/build/
-
-cookies
+doc/_build/
