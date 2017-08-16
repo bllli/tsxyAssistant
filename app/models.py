@@ -239,7 +239,6 @@ class _Class(db.Model):
         # return check_in_id_list
         return {
             'classes_check_in': [check_in.to_json() for check_in in self.check_in],
-
         }
 
 
@@ -563,8 +562,7 @@ class CheckIn(db.Model):
                 check.classes.append(c)
         elif check_in_type == CheckIn.CheckInType.course:
             course = Course.query.get_or_404(check_in_type)
-            check.course = course
-            check.classes.extend([c for c in course.classes])
+            check.appoint_course(course)
         else:
             raise ValidationError('不存在的类型值')
         return check
@@ -584,7 +582,10 @@ class CheckIn(db.Model):
         }
         return check_in_json
 
-
+    def appoint_course(self, course):
+        """指定课程"""
+        self.course = course
+        self.classes.extend([c for c in course.classes])
 
 
 class User(UserMixin, db.Model):

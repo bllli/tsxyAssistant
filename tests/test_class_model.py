@@ -32,7 +32,7 @@ class ClassModelTestCase(unittest.TestCase):
         course2.classes.append(cl)
 
         check_in = CheckIn(check_in_type=CheckIn.CheckInType.course)
-        check_in.course = course
+        check_in.appoint_course(course)
 
         db.session.add(cl)
         db.session.add(rc)
@@ -46,5 +46,4 @@ class ClassModelTestCase(unittest.TestCase):
         self.assertTrue(check_in in course.check_in)
         #
         check_in_id_list = cl.find_check_in()
-        self.assertTrue(check_in.id in check_in_id_list)
-
+        self.assertTrue(check_in.id in [c.get('id') for c in check_in_id_list.get('classes_check_in')])
