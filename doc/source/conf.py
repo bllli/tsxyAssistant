@@ -168,6 +168,3 @@ texinfo_documents = [
      author, 'tsxyAssistant', 'One line description of project.',
      'Miscellaneous'),
 ]
-
-
-

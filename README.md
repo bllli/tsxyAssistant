@@ -1,9 +1,9 @@
 # 唐小二 (原唐院助手)
+[![docs](http://tsxyassistant-docs.readthedocs.io/zh_CN/latest/?badge=latest)](https://github.com/bllli/tsxyAssistant)
+
 做唐院师生的好帮手
 
 本项目为唐院助手的后端, 使用Python Flask开发的RESTful api实现的前后交互
-
-[访问唐小二后端文档](http://bllli.coding.me/tsxyAssistant-docs/) 
 
 # 目前已确定要实现的功能
 每个功能单独拎出来都可以做个项目了_(:3」∠)_
