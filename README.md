@@ -1,5 +1,7 @@
 # 唐小二 (原唐院助手)
-[![docs](http://tsxyassistant-docs.readthedocs.io/zh_CN/latest/?badge=latest)](https://github.com/bllli/tsxyAssistant)
+
+
+[![](https://readthedocs.org/projects/tsxyassistant-docs/badge/?version=latest)](http://tsxyassistant-docs.readthedocs.io/zh_CN/latest/?badge=latest)
 
 做唐院师生的好帮手
 
