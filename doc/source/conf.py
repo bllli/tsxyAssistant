@@ -20,7 +20,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('.'))
 
-plantuml = 'java -jar /home/bllli/Downloads/plantuml.jar'
+# plantuml = 'java -jar /home/bllli/Downloads/plantuml.jar'
 
 # -- General configuration ------------------------------------------------
 
@@ -31,7 +31,8 @@ plantuml = 'java -jar /home/bllli/Downloads/plantuml.jar'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.graphviz', 'sphinxcontrib.plantuml']
+# extensions = ['sphinx.ext.graphviz', 'sphinxcontrib.plantuml']
+extensions = ['plantweb.directive']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
