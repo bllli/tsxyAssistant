@@ -31,19 +31,25 @@ class Operation:
 
 
 class Permission:
-    """权限类 用于规定权限的二进制数值"""
+    """权限类
+
+    用于规定权限的二进制数值
+    教师一定有TEACHER_BASE权限
+    学生一定有STUDENT_BASE权限
+    """
     STUDENT_BASE = 0x01  #: 学生基本权限
     TEACHER_BASE = 0x02  #: 教师基本权限
     NEW_CHECK_IN = 0x04  #: 发起签到权限
     CREATE = 0x08  #: 新增权限
     MODIFY = 0x10  #: 编辑权限
+    VIEW = 0x20  #: 查看数据权限
     ADMINISTER = 0x80  #: 管理员权限
 
     student = STUDENT_BASE
     student_leader = STUDENT_BASE | NEW_CHECK_IN
-    student_v = STUDENT_BASE | NEW_CHECK_IN | CREATE | MODIFY
+    student_v = STUDENT_BASE | NEW_CHECK_IN | CREATE | MODIFY | VIEW
     teacher = TEACHER_BASE | NEW_CHECK_IN
-    teacher_v = TEACHER_BASE | NEW_CHECK_IN | CREATE | MODIFY
+    teacher_v = TEACHER_BASE | NEW_CHECK_IN | CREATE | MODIFY | VIEW
     administrator = 0xff
 
     @staticmethod
@@ -547,6 +553,7 @@ class CheckIn(db.Model):
     @staticmethod
     def from_json(json_post):
         """发起签到任务"""
+        # ToDo: 如何判定签到任务已经结束？
         name = json_post.get('name') if json_post.get('name') else "签到@%s" % localtime(datetime.utcnow())
         ssid = json_post.get('ssid')
         check_in_type = json_post.get('check_in_type')
@@ -557,35 +564,48 @@ class CheckIn(db.Model):
             raise ValidationError('必须填写签到类型(按班级:1, 按课程:2)')
         elif check_in_type == CheckIn.CheckInType.classes:
             classes_id_list = json_post.get('classes')
-            for c_id in classes_id_list:
-                c = _Class.query.get_or_404(c_id)
-                check.classes.append(c)
+            check.appoint_classes(classes_id_list)
         elif check_in_type == CheckIn.CheckInType.course:
-            course = Course.query.get_or_404(check_in_type)
-            check.appoint_course(course)
+            course_id = json_post.get('course_id')
+            check.appoint_course(course_id)
         else:
-            raise ValidationError('不存在的类型值')
+            raise ValidationError('生成签到任务时遇到了未预定义的类型值')
         return check
 
     def to_json(self):
         """获取签到状态"""
+        check_in_json = self.to_simple_json()
+        check_in_json.update({'users_id': [u.id for u in self.users]})
+        return check_in_json
+
+    def to_simple_json(self):
+        """获取签到状态"""
         check_in_json = {
             'id': self.id,
             'name': self.name,
-            'start_time': localtime(self.start_time),
             'ssid': self.ssid,
-            'type': self.check_in_type.value,
+            'start_time': localtime(self.start_time),
+            'type': self.check_in_type,
             'sponsor_id': self.sponsor_id,
+            'sponsor_name': self.sponsor.name,
             'course_id': self.course_id,
             'classes_id': [c.id for c in self.classes],
-            'users_id': [u.id for u in self.users],
         }
         return check_in_json
 
-    def appoint_course(self, course):
+    def appoint_course(self, course_id):
+        # type: (list) -> None
         """指定课程"""
+        course = Course.query.get_or_404(course_id)
+        self.check_in_type = CheckIn.CheckInType.course
         self.course = course
         self.classes.extend([c for c in course.classes])
+
+    def appoint_classes(self, classes_id_list):
+        # type: (list) -> None
+        """指定班级"""
+        self.classes.extend([_Class.query.get_or_404(c_id) for c_id in classes_id_list if _Class.query.get_or_404(c_id)])
+        self.check_in_type = CheckIn.CheckInType.classes
 
 
 class User(UserMixin, db.Model):
